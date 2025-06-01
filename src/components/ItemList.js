@@ -58,13 +58,6 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
         const response = await api.get('/categories');
         const data = response.data;
         setCategories(data);
-        
-        // Create a mapping of category IDs to names
-        const categoryMap = {};
-        data.forEach(category => {
-          categoryMap[category.Id] = category.Name;
-        });
-        setCategoryLabels(categoryMap);
       } catch (error) {
         console.error("Error fetching categories:", error);
         setError(error.message);
