@@ -233,10 +233,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
     try {
       console.log('Fetching options for item:', item);
       const response = await api.get(`/items/${item.id}/options`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
+      const data = response.data;  // Axios automatically parses JSON
       console.log('Raw API response:', data);
       
       // Process and categorize all options with complete information
