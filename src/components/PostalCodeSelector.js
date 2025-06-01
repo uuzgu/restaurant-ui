@@ -103,7 +103,7 @@ const PostalCodeSelector = ({ onPostalCodeChange, onAddressChange, refs }) => {
     console.log('Selected address:', address);
     if (address) {
       const newFormValues = {
-        address: address.Street || '',
+        street: address.Street || '',
         house: address.House || '',
         stairs: address.Stairs || '',
         stick: address.Stick || '',

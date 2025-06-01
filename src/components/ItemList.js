@@ -8,6 +8,7 @@ import MenuSection from "../components/MenuSection";
 import Basket from "../components/Basket";
 import { useDarkMode } from "../DarkModeContext";
 import "../colors/popupIngredientsColors.css";
+import { useApi } from '../contexts/ApiContext';
 
 const ItemList = ({ basketVisible, setBasketVisible }) => {
   const { language, translations } = useLanguage();
@@ -32,6 +33,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
   const { darkMode } = useDarkMode();
   const navigate = useNavigate();
   const observer = useRef(null);
+  const { api } = useApi();
 
   // Scroll to top when component mounts or location state changes
   useEffect(() => {
@@ -53,20 +55,16 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:5019/api/categories");
-        if (!response.ok) {
-          throw new Error('Failed to fetch categories');
-        }
-        const data = await response.json();
-        console.log('Fetched categories:', data); // Debug log
-        // Add promotions category if not present
-        if (!data.some(cat => cat.Id === 0)) {
-          data.unshift({
-            Id: 0,
-            Name: "PROMOTIONS"
-          });
-        }
+        const response = await api.get('/categories');
+        const data = response.data;
         setCategories(data);
+        
+        // Create a mapping of category IDs to names
+        const categoryMap = {};
+        data.forEach(category => {
+          categoryMap[category.Id] = category.Name;
+        });
+        setCategoryLabels(categoryMap);
       } catch (error) {
         console.error("Error fetching categories:", error);
         setError(error.message);
@@ -74,7 +72,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
     };
 
     fetchCategories();
-  }, []);
+  }, [api]);
 
   // Create category labels from fetched categories
   const categoryLabels = useMemo(() => {
@@ -92,11 +90,8 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await fetch("http://localhost:5019/api/items");
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
+        const response = await api.get('/items');
+        const data = response.data;
 
         // Map the data to match the expected structure
         const mappedData = data.map(item => {
@@ -120,7 +115,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
           };
         });
 
-        console.log('Mapped items with categories:', mappedData); // Debug log
+        console.log('Mapped items with categories:', mappedData);
         setItems(mappedData);
       } catch (error) {
         console.error("Error fetching items:", error);
@@ -135,7 +130,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
     return () => {
       window.removeEventListener("scroll", detectActiveCategory);
     };
-  }, [categoryLabels]); // Add categoryLabels as dependency
+  }, [api, categoryLabels]);
 
   const categorizedItems = items.reduce((acc, item) => {
     const categoryId = item?.category_id;
@@ -244,7 +239,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
     }
     try {
       console.log('Fetching options for item:', item);
-      const response = await fetch(`http://localhost:5019/api/items/${item.id}/options`);
+      const response = await api.get(`/items/${item.id}/options`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -352,7 +347,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
     } catch (error) {
       console.error('Error fetching item options:', error);
     }
-  }, []);
+  }, [api]);
 
   // Update the calculateTotalPrice function to properly handle all types of selections
   const calculateTotalPrice = useCallback((basePrice, selectedItems, quantity = 1) => {
@@ -446,7 +441,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
       discountPercentage: maxDiscount,
       singleItemPrice: singleItemTotal
     };
-  }, [itemOptions]);
+  }, [api, itemOptions]);
 
   // Add a function to check if an item is free based on threshold
   const isItemFree = useCallback((item, group) => {

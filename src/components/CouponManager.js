@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../LanguageContext';
 import { useDarkMode } from '../DarkModeContext';
+import { useApi } from '../contexts/ApiContext';
 
 const CouponManager = () => {
   const { language, translations } = useLanguage();
   const { darkMode } = useDarkMode();
+  const { api } = useApi();
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,21 +27,15 @@ const CouponManager = () => {
 
   const fetchCoupons = async () => {
     try {
-      const response = await fetch('http://localhost:5019/api/coupons');
-      if (!response.ok) {
-        throw new Error('Failed to fetch coupons');
-      }
-      const data = await response.json();
+      const response = await api.get('/coupons');
+      const data = response.data;
       
       // Fetch history for each coupon
       const couponsWithHistory = await Promise.all(
         data.map(async (coupon) => {
           if (coupon.isPeriodic === 0) {
-            const historyResponse = await fetch(`http://localhost:5019/api/coupons/${coupon.id}/history`);
-            if (historyResponse.ok) {
-              const history = await historyResponse.json();
-              return { ...coupon, history };
-            }
+            const historyResponse = await api.get(`/coupons/${coupon.id}/history`);
+            return { ...coupon, history: historyResponse.data };
           }
           return coupon;
         })
@@ -64,22 +60,10 @@ const CouponManager = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = editingCoupon 
-        ? `http://localhost:5019/api/coupons/${editingCoupon.id}`
-        : 'http://localhost:5019/api/coupons';
-      
-      const method = editingCoupon ? 'PUT' : 'POST';
-      
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to save coupon');
+      if (editingCoupon) {
+        await api.put(`/coupons/${editingCoupon.id}`, formData);
+      } else {
+        await api.post('/coupons', formData);
       }
 
       setShowAddModal(false);
@@ -117,14 +101,7 @@ const CouponManager = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5019/api/coupons/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete coupon');
-      }
-
+      await api.delete(`/coupons/${id}`);
       fetchCoupons();
     } catch (error) {
       setError(error.message);

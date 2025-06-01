@@ -2,9 +2,7 @@ import axios from 'axios';
 
 // Get the base URL from the current window location
 const getBaseUrl = () => {
-  const hostname = window.location.hostname;
-  const port = '5019'; // Default port
-  return `http://${hostname}:${port}`;
+  return 'https://restaurant-api.onrender.com';
 };
 
 const API_URL = `${getBaseUrl()}/api/Stripe`; // Note the capital S in Stripe
@@ -22,7 +20,7 @@ export const createCashOrder = async ({ items, customerInfo, orderMethod }) => {
       throw new Error('Missing required customer information');
     }
 
-    if (orderMethod === 'delivery' && (!customerInfo.postalCode || !customerInfo.address)) {
+    if (orderMethod === 'delivery' && (!customerInfo.postalCode || !customerInfo.street)) {
       throw new Error('Missing required delivery information');
     }
 
@@ -50,15 +48,15 @@ export const createCashOrder = async ({ items, customerInfo, orderMethod }) => {
       Email: customerInfo.email,
       Phone: customerInfo.phone,
       CreateDate: new Date().toISOString(),
-      Address: orderMethod === 'delivery' ? {
+      ...(orderMethod === 'delivery' && {
         PostalCode: customerInfo.postalCode,
-        Street: customerInfo.address,
+        Street: customerInfo.street,
         House: customerInfo.house,
         Stairs: customerInfo.stairs || null,
         Stick: customerInfo.stick || null,
         Door: customerInfo.door || null,
         Bell: customerInfo.bell || null
-      } : null
+      })
     };
 
     // Prepare the request payload
@@ -206,15 +204,13 @@ export const createCheckoutSession = async ({ items, customerInfo, orderMethod, 
       Phone: customerInfo.phone,
       CreateDate: new Date().toISOString(),
       ...(orderMethod === 'delivery' && {
-        Address: {
-          PostalCode: customerInfo.postalCode,
-          Street: customerInfo.address,
-          House: customerInfo.house,
-          Stairs: customerInfo.stairs || null,
-          Stick: customerInfo.stick || null,
-          Door: customerInfo.door || null,
-          Bell: customerInfo.bell || null
-        }
+        PostalCode: customerInfo.postalCode,
+        Street: customerInfo.street,
+        House: customerInfo.house,
+        Stairs: customerInfo.stairs || null,
+        Stick: customerInfo.stick || null,
+        Door: customerInfo.door || null,
+        Bell: customerInfo.bell || null
       })
     };
 

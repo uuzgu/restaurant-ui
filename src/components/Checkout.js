@@ -219,7 +219,7 @@ const Checkout = ({ basket: propBasket, setBasket: propSetBasket, orderMethod: p
 
       // First check - if it's a delivery order, postal code and address are mandatory
       if (localOrderMethod === 'delivery') {
-        if (!formData.postalCode || !formData.address) {
+        if (!formData.postalCode || !formData.street) {
           setIsProcessing(false);
           setFormErrors({
             submit: 'Please select both postal code and address to proceed with payment'
@@ -230,7 +230,7 @@ const Checkout = ({ basket: propBasket, setBasket: propSetBasket, orderMethod: p
             postalCodeRef.current.classList.add('highlight-error');
             postalCodeRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
-          if (!formData.address && addressRef.current) {
+          if (!formData.street && addressRef.current) {
             addressRef.current.classList.add('highlight-error');
             addressRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
@@ -302,7 +302,7 @@ const Checkout = ({ basket: propBasket, setBasket: propSetBasket, orderMethod: p
         specialNotes: formData.specialNotes,
         ...(localOrderMethod === 'delivery' && {
           postalCode: formData.postalCode,
-          address: formData.address,
+          street: formData.street,
           house: formData.house,
           stairs: formData.stairs,
           stick: formData.stick,
@@ -661,7 +661,7 @@ const Checkout = ({ basket: propBasket, setBasket: propSetBasket, orderMethod: p
                           ...address
                         }));
                         // Clear address warning and highlight when selected
-                        if (address.address) {
+                        if (address.street) {
                           setFormErrors(prev => ({
                             ...prev,
                             addressWarning: undefined
