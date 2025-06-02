@@ -190,16 +190,12 @@ const Basket = ({
   return (
     <div
       ref={basketRef}
-      className={`basket-panel fixed z-[1000] transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col ${
-        window.innerWidth < 800 
-          ? 'w-full max-w-full bottom-0 left-0 right-0 mobile-basket-panel' 
-          : 'w-full max-w-md top-[96px] right-4'
-      } ${
+      className={`basket-panel transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col ${
         basketVisible ? 'translate-y-0' : 'translate-y-full'
       }`}
     >
       {/* Order Method Toggle */}
-      <div className="order-toggle mb-6">
+      <div className="order-toggle">
         <div className="toggle-wrapper-long" data-selected={orderMethod}>
           <button
             type="button"
