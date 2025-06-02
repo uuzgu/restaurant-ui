@@ -70,12 +70,12 @@ export const createCashOrder = async ({ items, customerInfo, orderMethod }) => {
       totalAmount
     };
 
-    console.log('Sending cash order request to:', `${API_URL}/create-checkout-session`);
+    console.log('Sending cash order request to:', `${getBaseUrl()}/api/Order/create-cash-order`);
     console.log('Request payload:', JSON.stringify(requestPayload, null, 2));
 
     // Send the order data to the create-checkout-session endpoint
     const response = await axios.post(
-      `${API_URL}/create-checkout-session`,
+      `${getBaseUrl()}/api/Order/create-cash-order`,
       requestPayload,
       {
         headers: {
@@ -226,11 +226,11 @@ export const createCheckoutSession = async ({ items, customerInfo, orderMethod, 
     };
 
     console.log('Sending request to API:', JSON.stringify(requestPayload, null, 2));
-    console.log('API Endpoint:', `${API_URL}/create-checkout-session`);
+    console.log('API Endpoint:', `${API_URL}/stripe/create-checkout-session`);
 
     // Send the order data
     const response = await axios.post(
-      `${API_URL}/create-checkout-session`,
+      `${API_URL}/stripe/create-checkout-session`,
       requestPayload,
       {
         headers: {
