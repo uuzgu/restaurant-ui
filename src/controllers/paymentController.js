@@ -5,7 +5,7 @@ const getBaseUrl = () => {
   return 'https://restaurant-api-923e.onrender.com';
 };
 
-const API_URL = `${getBaseUrl()}/api/Stripe`; // Note the capital S in Stripe
+const API_URL = `${getBaseUrl()}/api`; // Remove the /Stripe suffix
 
 export const createCashOrder = async ({ items, customerInfo, orderMethod }) => {
   try {
