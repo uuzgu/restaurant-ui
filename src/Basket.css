@@ -93,6 +93,7 @@
     margin-bottom: 1rem;
     padding-bottom: 0.75rem;
     position: relative;
+    border: 2px dashed blue !important; /* DEBUG: Remove after testing */
 }
 
 .basket-item {
@@ -479,6 +480,7 @@
     margin-bottom: 2rem;
     width: 100%;
     box-sizing: border-box;
+    border: 2px dashed red !important; /* DEBUG: Remove after testing */
 }
 
 .toggle-wrapper-long {
