@@ -226,11 +226,11 @@ export const createCheckoutSession = async ({ items, customerInfo, orderMethod, 
     };
 
     console.log('Sending request to API:', JSON.stringify(requestPayload, null, 2));
-    console.log('API Endpoint:', `${API_URL}/Stripe/create-checkout-session`);
+    console.log('API Endpoint:', `${getBaseUrl()}/api/Stripe/create-checkout-session`);
 
     // Send the order data
     const response = await axios.post(
-      `${API_URL}/Stripe/create-checkout-session`,
+      `${getBaseUrl()}/api/Stripe/create-checkout-session`,
       requestPayload,
       {
         headers: {
