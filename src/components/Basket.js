@@ -147,12 +147,13 @@ const Basket = ({
   // Dynamically set basket top and height based on header
   useEffect(() => {
     function updateBasketPosition() {
-      const header = document.querySelector('.bg-[var(--header-bg)]');
+      const header = document.querySelector('.main-header');
       const basket = basketRef.current;
-      if (header && basket) {
-        const headerHeight = header.offsetHeight;
+      if (basket) {
+        const headerHeight = header ? header.offsetHeight : 96;
         basket.style.top = headerHeight + 'px';
         basket.style.height = `calc(100vh - ${headerHeight}px)`;
+        console.log('Basket headerHeight:', headerHeight);
       }
     }
     updateBasketPosition();
