@@ -153,13 +153,22 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
     return filtered;
   }, [categorizedItems, searchQuery]);
 
-  // Sort categories to ensure promotions (0) comes first
+  // Sort categories to match backend ordering
   const sortedCategoryIds = Object.keys(filteredCategorizedItems).sort((a, b) => {
-    const aNum = parseInt(a);
-    const bNum = parseInt(b);
-    if (aNum === 0) return -1;
-    if (bNum === 0) return 1;
-    return aNum - bNum;
+    const orderMap = {
+      0: 1,  // Promotions
+      1: 2,  // Pizza
+      2: 3,  // Bowl
+      3: 4,  // Cheeseburger
+      4: 5,  // Salad
+      5: 6,  // Breakfast
+      6: 7,  // Drinks
+      7: 8,  // Soup
+      8: 9,  // Dessert
+    };
+    const aOrder = orderMap[parseInt(a)] || 10;
+    const bOrder = orderMap[parseInt(b)] || 10;
+    return aOrder - bOrder;
   });
 
   const scrollToSection = (categoryId) => {

@@ -21,11 +21,22 @@ const CategoryCount = ({ categories, activeCategory, setActiveCategory, scrollTo
     "8": "/images/categories/dessertCategoryList.png"
   };
 
-  // Sort categories to ensure promotions comes first
+  // Sort categories to match backend ordering
   const sortedCategories = [...categories].sort((a, b) => {
-    if (a.categoryId === 0) return -1;
-    if (b.categoryId === 0) return 1;
-    return a.categoryId - b.categoryId;
+    const orderMap = {
+      0: 1,  // Promotions
+      1: 2,  // Pizza
+      2: 3,  // Bowl
+      3: 4,  // Cheeseburger
+      4: 5,  // Salad
+      5: 6,  // Breakfast
+      6: 7,  // Drinks
+      7: 8,  // Soup
+      8: 9,  // Dessert
+    };
+    const aOrder = orderMap[a.categoryId] || 10;
+    const bOrder = orderMap[b.categoryId] || 10;
+    return aOrder - bOrder;
   });
 
   useEffect(() => {
