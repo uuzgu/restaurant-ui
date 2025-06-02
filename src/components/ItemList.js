@@ -281,9 +281,20 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
           selected: false
         })) : [],
 
-        // Combine both item-specific and category-level selection groups
+        // Combine both item-specific and category-level selection groups, removing duplicates based on Id
         selectionGroups: [
-          ...(Array.isArray(data.SelectionGroups) ? data.SelectionGroups.map(group => ({
+          ...(Array.isArray(data.SelectionGroups) ? data.SelectionGroups : []),
+          ...(Array.isArray(data.CategorySelectionGroups) ? data.CategorySelectionGroups : [])
+        ]
+          .reduce((acc, group) => {
+            const existingGroup = acc.find(g => g.Id === group.Id);
+            if (!existingGroup) {
+              acc.push(group);
+            }
+            return acc;
+          }, [])
+          .sort((a, b) => a.DisplayOrder - b.DisplayOrder)
+          .map(group => ({
             id: group.Id,
             name: group.Name,
             type: group.Type,
@@ -301,27 +312,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
               quantity: 0,
               type: 'selection'
             })) : []
-          })) : []),
-          ...(Array.isArray(data.CategorySelectionGroups) ? data.CategorySelectionGroups.map(group => ({
-            id: group.Id,
-            name: group.Name,
-            type: group.Type,
-            isRequired: group.IsRequired,
-            minSelect: group.MinSelect,
-            maxSelect: group.MaxSelect,
-            threshold: group.Threshold,
-            displayOrder: group.DisplayOrder,
-            options: Array.isArray(group.Options) ? group.Options.map(option => ({
-              id: option.Id,
-              name: option.Name,
-              price: Number(option.Price || 0),
-              displayOrder: option.DisplayOrder,
-              selected: false,
-              quantity: 0,
-              type: 'selection'
-            })) : []
-          })) : [])
-        ].sort((a, b) => a.displayOrder - b.displayOrder)
+          }))
       };
       
       console.log('Processed selection groups before deduplication:', processedData.selectionGroups);
