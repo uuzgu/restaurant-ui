@@ -987,7 +987,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
     <div className="min-h-screen bg-[var(--order-bg)] text-[var(--order-text-primary)]">
       <div className="content-container">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-[var(--category-header-bg)] fixed top-24 left-0 w-full z-40 py-4 shadow-[var(--category-header-shadow)]">
+          <div className="bg-[var(--category-header-bg)] fixed top-20 sm:top-24 left-0 w-full z-40 py-2 shadow-[var(--category-header-shadow)]">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
               <div className="flex items-center w-full max-w-[700px] space-x-4 overflow-x-auto">
                 <CategoryCount
@@ -1057,10 +1057,10 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
 
       {showPopup && selectedItem && (
         <div className="ingredient-popup px-2 sm:px-0">
-          <div className="w-full max-w-[500px] max-h-[90vh] flex flex-col mx-auto bg-[var(--popup-container-bg)] rounded-[30px]" style={{ maxWidth: '95vw', maxHeight: '90vh' }}>
+          <div className="w-full max-w-[95vw] sm:max-w-[500px] md:max-w-[700px] lg:max-w-[800px] max-h-[90vh] flex flex-col mx-auto bg-[var(--popup-container-bg)] rounded-[30px]" style={{ maxWidth: undefined, maxHeight: '90vh' }}>
             <div className="rounded-[30px] text-[var(--popup-header-text)] w-full overflow-hidden flex flex-col">
               {selectedItem.image_url && (
-                <div className="relative w-full h-[220px] sm:h-[300px] flex-shrink-0">
+                <div className="relative w-full h-[180px] sm:h-[220px] md:h-[300px] flex-shrink-0">
                   <img
                     src={selectedItem.image_url}
                     alt={selectedItem.name || 'Item'}

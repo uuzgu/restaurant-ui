@@ -89,7 +89,7 @@ const Header = ({ toggleBasket, basketVisible }) => {
           </button>
 
           {/* Basket Toggle - Only visible on order page */}
-          <div className={`${isOrderPage ? 'block' : 'hidden'}`}>
+          {isOrderPage && (
             <button
               onClick={toggleBasket}
               className={`w-9 h-9 sm:w-10 sm:h-10 p-2 flex items-center justify-center text-sm border ${
@@ -100,27 +100,29 @@ const Header = ({ toggleBasket, basketVisible }) => {
             >
               <ShoppingCart className="w-5 h-5 inline-block" />
             </button>
-          </div>
+          )}
 
-          {/* Social Links - Hide on mobile, show on sm+ */}
-          <div className={`hidden sm:flex space-x-2`}>
-            <a
-              href="https://instagram.com/YOUR_PAGE"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`w-9 h-9 sm:w-10 sm:h-10 p-2 flex items-center justify-center border border-[var(--header-border)] rounded-full bg-[var(--header-button-bg)] text-[var(--header-text-primary)] hover:bg-[var(--header-button-hover)] transition-colors duration-200`}
-            >
-              <Instagram className="w-5 h-5" />
-            </a>
-            <a
-              href="https://twitter.com/YOUR_PAGE"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`w-9 h-9 sm:w-10 sm:h-10 p-2 flex items-center justify-center border border-[var(--header-border)] rounded-full bg-[var(--header-button-bg)] text-[var(--header-text-primary)] hover:bg-[var(--header-button-hover)] transition-colors duration-200`}
-            >
-              <Twitter className="w-5 h-5" />
-            </a>
-          </div>
+          {/* Social Links - Only on home page (not order page) and not on mobile */}
+          {!isOrderPage && (
+            <div className={`hidden sm:flex space-x-2`}>
+              <a
+                href="https://instagram.com/YOUR_PAGE"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`w-9 h-9 sm:w-10 sm:h-10 p-2 flex items-center justify-center border border-[var(--header-border)] rounded-full bg-[var(--header-button-bg)] text-[var(--header-text-primary)] hover:bg-[var(--header-button-hover)] transition-colors duration-200`}
+              >
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a
+                href="https://twitter.com/YOUR_PAGE"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`w-9 h-9 sm:w-10 sm:h-10 p-2 flex items-center justify-center border border-[var(--header-border)] rounded-full bg-[var(--header-button-bg)] text-[var(--header-text-primary)] hover:bg-[var(--header-button-hover)] transition-colors duration-200`}
+              >
+                <Twitter className="w-5 h-5" />
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </div>
