@@ -142,6 +142,23 @@ const Basket = ({
   const location = useLocation();
   const [previousBasketState, setPreviousBasketState] = useState(null);
   const warningShownRef = useRef(false);
+  const basketRef = useRef(null);
+
+  // Dynamically set basket top and height based on header
+  useEffect(() => {
+    function updateBasketPosition() {
+      const header = document.querySelector('.bg-[var(--header-bg)]');
+      const basket = basketRef.current;
+      if (header && basket) {
+        const headerHeight = header.offsetHeight;
+        basket.style.top = headerHeight + 'px';
+        basket.style.height = `calc(100vh - ${headerHeight}px)`;
+      }
+    }
+    updateBasketPosition();
+    window.addEventListener('resize', updateBasketPosition);
+    return () => window.removeEventListener('resize', updateBasketPosition);
+  }, []);
 
   // Show coupon warning only when coming from checkout or when basket is modified
   useEffect(() => {
@@ -188,7 +205,8 @@ const Basket = ({
 
   return (
     <div
-      className={`basket-panel fixed right-0 z-50 transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col w-full max-w-md h-[calc(100vh-96px)] mobile-basket-panel translate-y-0`}
+      ref={basketRef}
+      className={`basket-panel fixed right-0 z-50 transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col w-full max-w-md mobile-basket-panel translate-y-0`}
       style={{ top: '96px' }}
     >
       {/* Removed mobile basket header and close button */}
