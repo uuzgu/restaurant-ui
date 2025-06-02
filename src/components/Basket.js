@@ -207,7 +207,7 @@ const Basket = ({
   return (
     <div
       ref={basketRef}
-      className={`basket-panel fixed right-0 z-50 transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col w-full max-w-md mobile-basket-panel translate-y-0`}
+      className={`basket-panel fixed right-0 z-[1000] transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col w-full max-w-md mobile-basket-panel translate-y-0`}
       style={{ top: '96px' }}
     >
       {/* Removed mobile basket header and close button */}
@@ -239,7 +239,7 @@ const Basket = ({
       )}
 
       {/* Basket Content */}
-      <div className="basket-content">
+      <div className="basket-content flex-1 overflow-y-auto">
         {basket.length === 0 ? (
           <div className="empty-basket">
             <div className="empty-basket-icon">

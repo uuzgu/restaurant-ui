@@ -14,7 +14,7 @@ const Header = ({ toggleBasket, basketVisible }) => {
   const { darkMode, toggleDarkMode } = useDarkMode();
 
   return (
-    <div className={`main-header bg-[var(--header-bg)] fixed top-0 left-0 w-full z-50 shadow-[var(--header-shadow)] ${darkMode ? 'dark' : ''}`}>
+    <div className={`main-header bg-[var(--header-bg)] fixed top-0 left-0 w-full z-[1050] shadow-[var(--header-shadow)] ${darkMode ? 'dark' : ''}`}>
       <div className="container mx-auto px-2 sm:px-4 md:px-6 lg:px-8 flex flex-wrap items-center justify-between h-20 sm:h-24 gap-y-2">
         {/* 🔴 LEFT: Logo + Navigation */}
         <div className="flex items-center space-x-2 sm:space-x-6 md:space-x-8 min-w-0">
