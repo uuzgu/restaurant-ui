@@ -26,13 +26,13 @@ const CategoryCount = ({ categories, activeCategory, setActiveCategory, scrollTo
     const orderMap = {
       0: 1,  // Promotions
       1: 2,  // Pizza
-      2: 3,  // Bowl
-      3: 4,  // Cheeseburger
-      4: 5,  // Salad
+      2: 3,  // Bowls
+      3: 4,  // Hamburgers
+      4: 5,  // Salads
       5: 6,  // Breakfast
       6: 7,  // Drinks
-      7: 8,  // Soup
-      8: 9,  // Dessert
+      7: 8,  // Soups
+      8: 9,  // Desserts
     };
     const aOrder = orderMap[a.categoryId] || 10;
     const bOrder = orderMap[b.categoryId] || 10;
