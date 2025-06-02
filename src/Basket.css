@@ -33,12 +33,13 @@
 @media (max-width: 800px) {
     .basket-panel {
         position: fixed;
-        bottom: 0;
+        top: 96px;
         left: 0;
         right: 0;
+        bottom: 0;
         width: 100%;
         max-width: 100%;
-        height: calc(100vh - 96px);
+        height: auto;
         transform: translateY(100%);
         border-radius: 1rem 1rem 0 0;
         padding: 1rem;
