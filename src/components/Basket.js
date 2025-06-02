@@ -207,10 +207,14 @@ const Basket = ({
   return (
     <div
       ref={basketRef}
-      className={`basket-panel fixed right-0 z-[1000] transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col w-full max-w-md mobile-basket-panel translate-y-0`}
-      style={{ top: '96px' }}
+      className={`basket-panel fixed right-0 z-[1000] transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col ${
+        window.innerWidth < 800 
+          ? 'w-full max-w-full mobile-basket-panel' 
+          : 'w-full max-w-md'
+      } ${
+        basketVisible ? 'translate-y-0' : 'translate-y-full'
+      }`}
     >
-      {/* Removed mobile basket header and close button */}
       {/* Order Method Toggle */}
       <div className="order-toggle mb-6">
         <div className="toggle-wrapper-long" data-selected={orderMethod}>

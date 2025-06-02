@@ -29,7 +29,7 @@
     box-shadow: var(--basket-container-shadow);
 }
 
-/* Responsive adjustments for basket panel */
+/* Mobile styles */
 @media (max-width: 800px) {
     .basket-panel {
         top: auto !important;
@@ -38,6 +38,7 @@
         left: 0;
         width: 100vw !important;
         max-width: 100vw !important;
+        height: calc(100vh - 96px) !important; /* Header height */
         transform: translateY(100%);
         border-radius: 1rem 1rem 0 0;
         padding: 1rem;
@@ -63,6 +64,8 @@
     }
 
     .basket-content {
+        flex: 1;
+        overflow-y: auto;
         padding: 0 0.5rem;
         margin-bottom: 0.5rem;
     }
@@ -77,6 +80,16 @@
 
     .basket-total {
         padding: 0.5rem;
+    }
+}
+
+/* Desktop styles */
+@media (min-width: 801px) {
+    .basket-panel {
+        top: 96px; /* Header height */
+        right: 1.5rem;
+        max-width: 28rem;
+        height: calc(100vh - 96px);
     }
 }
 
