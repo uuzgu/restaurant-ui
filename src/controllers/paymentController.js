@@ -5,7 +5,23 @@ const getBaseUrl = () => {
   return 'https://restaurant-api-923e.onrender.com';
 };
 
-const API_URL = `${getBaseUrl()}/api`; // Remove the /Stripe suffix
+// Centralized API endpoint configuration
+const API_ENDPOINTS = {
+  STRIPE: {
+    CREATE_CHECKOUT: '/api/Stripe/create-checkout-session',
+    PAYMENT_SUCCESS: '/api/Stripe/payment-success',
+    PAYMENT_CANCEL: '/api/Stripe/payment-cancel'
+  },
+  ORDER: {
+    CREATE_CASH: '/api/Order/create-cash-order'
+  },
+  POSTCODE: {
+    GET_MINIMUM_ORDER: '/api/PostcodeMinimumOrder/GetMinimumOrderValue'
+  }
+};
+
+// Helper function to construct full API URLs
+const getApiUrl = (endpoint) => `${getBaseUrl()}${endpoint}`;
 
 export const createCashOrder = async ({ items, customerInfo, orderMethod }) => {
   try {
@@ -70,12 +86,12 @@ export const createCashOrder = async ({ items, customerInfo, orderMethod }) => {
       totalAmount
     };
 
-    console.log('Sending cash order request to:', `${getBaseUrl()}/api/Order/create-cash-order`);
+    console.log('Sending cash order request to:', getApiUrl(API_ENDPOINTS.ORDER.CREATE_CASH));
     console.log('Request payload:', JSON.stringify(requestPayload, null, 2));
 
     // Send the order data to the create-checkout-session endpoint
     const response = await axios.post(
-      `${getBaseUrl()}/api/Order/create-cash-order`,
+      getApiUrl(API_ENDPOINTS.ORDER.CREATE_CASH),
       requestPayload,
       {
         headers: {
@@ -136,7 +152,7 @@ export const createCheckoutSession = async ({ items, customerInfo, orderMethod, 
     console.log('=== Creating Checkout Session ===');
     console.log('Payment Method:', paymentMethod);
     console.log('Order Method:', orderMethod);
-    console.log('API URL:', API_URL);
+    console.log('API URL:', getApiUrl(API_ENDPOINTS.STRIPE.CREATE_CHECKOUT));
     console.log('Items:', JSON.stringify(items, null, 2));
     console.log('Customer Info:', JSON.stringify(customerInfo, null, 2));
 
@@ -226,11 +242,11 @@ export const createCheckoutSession = async ({ items, customerInfo, orderMethod, 
     };
 
     console.log('Sending request to API:', JSON.stringify(requestPayload, null, 2));
-    console.log('API Endpoint:', `${getBaseUrl()}/api/Stripe/create-checkout-session`);
+    console.log('API Endpoint:', getApiUrl(API_ENDPOINTS.STRIPE.CREATE_CHECKOUT));
 
     // Send the order data
     const response = await axios.post(
-      `${getBaseUrl()}/api/Stripe/create-checkout-session`,
+      getApiUrl(API_ENDPOINTS.STRIPE.CREATE_CHECKOUT),
       requestPayload,
       {
         headers: {
@@ -293,7 +309,9 @@ export const handlePaymentSuccess = async (sessionId) => {
     }
 
     // Call the backend to verify the payment
-    const response = await axios.get(`${API_URL}/payment-success?session_id=${sessionIdToUse}`);
+    const response = await axios.get(
+      `${getApiUrl(API_ENDPOINTS.STRIPE.PAYMENT_SUCCESS)}?session_id=${sessionIdToUse}`
+    );
     console.log('Payment success response:', response.data);
 
     if (!response.data) {
@@ -320,7 +338,7 @@ export const handlePaymentCancel = async (sessionId) => {
   try {
     if (sessionId) {
       await axios.post(
-        `${API_URL}/payment-cancel`,
+        getApiUrl(API_ENDPOINTS.STRIPE.PAYMENT_CANCEL),
         { sessionId },
         {
           headers: {
@@ -339,9 +357,9 @@ export const handlePaymentCancel = async (sessionId) => {
 
 export const getMinimumOrderValue = async (postcode) => {
   try {
-    // Use the base URL without the /api/Stripe prefix
-    const baseUrl = getBaseUrl();
-    const response = await axios.get(`${baseUrl}/api/PostcodeMinimumOrder/GetMinimumOrderValue/${postcode}`);
+    const response = await axios.get(
+      `${getApiUrl(API_ENDPOINTS.POSTCODE.GET_MINIMUM_ORDER)}/${postcode}`
+    );
     return response.data;
   } catch (error) {
     console.error('Error fetching minimum order value:', error);
