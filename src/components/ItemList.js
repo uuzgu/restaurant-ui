@@ -1053,6 +1053,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
               basketVisible={basketVisible}
               orderMethod={orderMethod}
               onOrderMethodChange={handleOrderMethodChange}
+              toggleBasket={setBasketVisible.bind(null, false)}
             />
           </div>
         )}

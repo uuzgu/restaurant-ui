@@ -133,7 +133,8 @@ const Basket = ({
   language,
   basketVisible,
   orderMethod,
-  onOrderMethodChange
+  onOrderMethodChange,
+  toggleBasket
 }) => {
   const navigate = useNavigate();
   const { darkMode } = useDarkMode();
@@ -187,9 +188,18 @@ const Basket = ({
 
   return (
     <div
-      className={`basket-panel fixed right-0 z-50 transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col w-full max-w-md h-[calc(100vh-96px)]`}
+      className={`basket-panel fixed right-0 z-50 transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col w-full max-w-md h-[calc(100vh-96px)] mobile-basket-panel`}
       style={{ top: '96px' }}
     >
+      {/* Mobile Full-Screen Header */}
+      <div className="mobile-basket-header">
+        <span className="mobile-basket-title">{translations[language].yourBasket || 'Your Basket'}</span>
+        <button className="mobile-basket-close" onClick={toggleBasket} aria-label="Close basket">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-7 h-7">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
       {/* Order Method Toggle */}
       <div className="order-toggle mb-6">
         <div className="toggle-wrapper-long" data-selected={orderMethod}>
