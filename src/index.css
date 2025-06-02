@@ -268,7 +268,7 @@ body {
     display: flex;
     flex-direction: column;
     animation: basket-slide-up 0.3s cubic-bezier(0.4,0,0.2,1);
-    padding-top: 96px !important;
+    padding-top: 0 !important;
   }
   .basket-panel {
     border-radius: 0 !important;
@@ -277,7 +277,7 @@ body {
     width: 100vw !important;
     height: 100vh !important;
     min-height: 100vh !important;
-    padding-top: 96px !important;
+    padding-top: 0 !important;
   }
 }
 
@@ -686,7 +686,7 @@ body {
     display: flex;
     flex-direction: column;
     animation: basket-slide-up 0.3s cubic-bezier(0.4,0,0.2,1);
-    padding-top: 96px !important;
+    padding-top: 0 !important;
   }
   .basket-panel {
     border-radius: 0 !important;
@@ -695,7 +695,7 @@ body {
     width: 100vw !important;
     height: 100vh !important;
     min-height: 100vh !important;
-    padding-top: 96px !important;
+    padding-top: 0 !important;
   }
 }
 /* --- End Mobile Full-Screen Basket Drawer (Below Header) --- */
