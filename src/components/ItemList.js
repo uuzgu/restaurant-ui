@@ -1038,25 +1038,24 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
             </div>
           </div>
         </div>
-        {/* Basket Section - Only render when basketVisible is true */}
-        {basketVisible && (
-          <Basket
-            basket={basket}
-            toggleQuantityVisibility={toggleQuantityVisibility}
-            increaseQuantity={increaseQuantity}
-            decreaseQuantity={decreaseQuantity}
-            removeFromBasket={removeFromBasket}
-            confirmQuantity={confirmQuantity}
-            translations={translations}
-            language={language}
-            basketVisible={basketVisible}
-            orderMethod={orderMethod}
-            onOrderMethodChange={handleOrderMethodChange}
-            toggleBasket={setBasketVisible.bind(null, false)}
-          />
-        )}
       </div>
-
+      {/* Basket rendered at the top level, outside all containers */}
+      {basketVisible && (
+        <Basket
+          basket={basket}
+          toggleQuantityVisibility={toggleQuantityVisibility}
+          increaseQuantity={increaseQuantity}
+          decreaseQuantity={decreaseQuantity}
+          removeFromBasket={removeFromBasket}
+          confirmQuantity={confirmQuantity}
+          translations={translations}
+          language={language}
+          basketVisible={basketVisible}
+          orderMethod={orderMethod}
+          onOrderMethodChange={handleOrderMethodChange}
+          toggleBasket={setBasketVisible.bind(null, false)}
+        />
+      )}
       {showPopup && selectedItem && (
         <div className="ingredient-popup px-2 sm:px-0">
           <div className="w-full max-w-[95vw] sm:max-w-[500px] md:max-w-[700px] lg:max-w-[800px] max-h-[90vh] flex flex-col mx-auto bg-[var(--popup-container-bg)] rounded-[30px]" style={{ maxWidth: undefined, maxHeight: '90vh' }}>
@@ -1319,7 +1318,6 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
           </div>
         </div>
       )}
-
     </div>
   );
 };
