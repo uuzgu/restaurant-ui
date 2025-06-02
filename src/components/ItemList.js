@@ -1056,11 +1056,11 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
       </div>
 
       {showPopup && selectedItem && (
-        <div className="ingredient-popup">
-          <div className="w-full max-w-[500px] max-h-[90vh] flex flex-col mx-auto bg-[var(--popup-container-bg)] rounded-[30px]">
+        <div className="ingredient-popup px-2 sm:px-0">
+          <div className="w-full max-w-[500px] max-h-[90vh] flex flex-col mx-auto bg-[var(--popup-container-bg)] rounded-[30px]" style={{ maxWidth: '95vw', maxHeight: '90vh' }}>
             <div className="rounded-[30px] text-[var(--popup-header-text)] w-full overflow-hidden flex flex-col">
               {selectedItem.image_url && (
-                <div className="relative w-full h-[300px] flex-shrink-0">
+                <div className="relative w-full h-[220px] sm:h-[300px] flex-shrink-0">
                   <img
                     src={selectedItem.image_url}
                     alt={selectedItem.name || 'Item'}
@@ -1072,7 +1072,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
                       setShowRequiredOptionsWarning(false);
                       document.body.classList.remove('popup-active');
                     }}
-                    className="absolute top-4 right-4 w-8 h-8 bg-[var(--popup-close-button-bg)] text-[var(--popup-close-button-text)] hover:text-[var(--popup-close-button-hover-text)] rounded-full border border-[var(--popup-close-button-border)] flex items-center justify-center shadow-md"
+                    className="absolute top-2 right-2 sm:top-4 sm:right-4 w-11 h-11 min-w-[44px] min-h-[44px] bg-[var(--popup-close-button-bg)] text-[var(--popup-close-button-text)] hover:text-[var(--popup-close-button-hover-text)] rounded-full border border-[var(--popup-close-button-border)] flex items-center justify-center shadow-md z-10"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -1085,9 +1085,8 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
                   )}
                 </div>
               )}
-              
-              <div className="popup-content overflow-y-auto flex-1 px-6 py-4 bg-[var(--popup-content-bg)] text-[var(--popup-content-text)]">
-                <div className="p-6">
+              <div className="popup-content overflow-y-auto flex-1 px-2 py-2 sm:px-6 sm:py-4 bg-[var(--popup-content-bg)] text-[var(--popup-content-text)]" style={{ maxHeight: 'calc(90vh - 220px)' }}>
+                <div className="p-2 sm:p-6">
                   <h2 className="text-2xl font-bold text-[var(--popup-header-text)] mb-2 text-left">
                     {selectedItem.name || 'Unnamed Item'}
                   </h2>
@@ -1276,7 +1275,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
                     <div className="flex items-center border border-[var(--popup-button-border)] rounded-2xl bg-[var(--popup-button-bg)] shadow-sm h-10">
                       <button
                         onClick={() => updatePopupItemQuantity(-1)}
-                        className="text-lg font-bold text-[var(--popup-button-text)] px-3 h-full flex items-center hover:text-[var(--popup-button-hover-text)]"
+                        className="text-lg font-bold text-[var(--popup-button-text)] px-3 h-full flex items-center hover:text-[var(--popup-button-hover-text)] min-w-[44px] min-h-[44px]"
                       >
                         -
                       </button>
@@ -1285,7 +1284,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
                       </span>
                       <button
                         onClick={() => updatePopupItemQuantity(1)}
-                        className="text-lg font-bold text-[var(--popup-button-text)] px-3 h-full flex items-center hover:text-[var(--popup-button-hover-text)]"
+                        className="text-lg font-bold text-[var(--popup-button-text)] px-3 h-full flex items-center hover:text-[var(--popup-button-hover-text)] min-w-[44px] min-h-[44px]"
                       >
                         +
                       </button>

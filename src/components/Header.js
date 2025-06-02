@@ -18,7 +18,7 @@ const Header = ({ toggleBasket, basketVisible }) => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-24">
         {/* 🔴 LEFT: Logo + Navigation */}
         <div className="flex items-center space-x-8">
-          <div className="relative h-24 flex items-center">
+          <div className="relative h-24 flex items-center mr-6">
             <img
               src={pizzaLogo}
               alt="Pizza Logo"
@@ -31,7 +31,7 @@ const Header = ({ toggleBasket, basketVisible }) => {
             />
           </div>
 
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-8">
             <div className="relative inline-block">
               <Link
                 to="/"
@@ -75,7 +75,7 @@ const Header = ({ toggleBasket, basketVisible }) => {
           {/* Dark Mode Toggle - Always visible */}
           <button
             onClick={toggleDarkMode}
-            className={`p-2 border border-[var(--header-border)] bg-[var(--header-button-bg)] text-[var(--header-text-primary)] rounded-2xl hover:bg-[var(--header-button-hover)] transition-colors duration-200`}
+            className={`w-10 h-10 p-2 flex items-center justify-center border border-[var(--header-border)] bg-[var(--header-button-bg)] text-[var(--header-text-primary)] rounded-full hover:bg-[var(--header-button-hover)] transition-colors duration-200`}
           >
             {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
@@ -83,7 +83,7 @@ const Header = ({ toggleBasket, basketVisible }) => {
           {/* Language Toggle - Always visible */}
           <button
             onClick={toggleLanguage}
-            className={`text-sm border border-[var(--header-border)] bg-[var(--header-button-bg)] text-[var(--header-text-primary)] px-2 py-1 rounded-2xl hover:bg-[var(--header-button-hover)] transition-colors duration-200`}
+            className={`w-10 h-10 p-2 flex items-center justify-center text-sm border border-[var(--header-border)] bg-[var(--header-button-bg)] text-[var(--header-text-primary)] rounded-full hover:bg-[var(--header-button-hover)] transition-colors duration-200`}
           >
             <span className="text-2xl">{language === "en" ? "🇬🇧" : "🇹🇷"}</span>
           </button>
@@ -92,14 +92,13 @@ const Header = ({ toggleBasket, basketVisible }) => {
           <div className={`${isOrderPage ? 'block' : 'hidden'}`}>
             <button
               onClick={toggleBasket}
-              className={`text-sm border ${
+              className={`w-10 h-10 p-2 flex items-center justify-center text-sm border ${
                 basketVisible 
                   ? 'border-[var(--header-basket-border-active)] text-[var(--header-basket-text-active)]' 
                   : 'border-[var(--header-basket-border)] text-[var(--header-basket-text)]'
-              } bg-[var(--header-button-bg)] px-4 py-2 rounded-2xl hover:bg-[var(--header-button-hover)] transition-colors duration-200`}
+              } bg-[var(--header-button-bg)] rounded-full hover:bg-[var(--header-button-hover)] transition-colors duration-200`}
             >
-              <ShoppingCart className="w-5 h-5 inline-block mr-1" />
-              {translations[language].basket || "Basket"}
+              <ShoppingCart className="w-5 h-5 inline-block" />
             </button>
           </div>
 
@@ -109,7 +108,7 @@ const Header = ({ toggleBasket, basketVisible }) => {
               href="https://instagram.com/YOUR_PAGE"
               target="_blank"
               rel="noopener noreferrer"
-              className={`p-2 border border-[var(--header-border)] rounded-2xl bg-[var(--header-button-bg)] text-[var(--header-text-primary)] hover:bg-[var(--header-button-hover)] transition-colors duration-200`}
+              className={`w-10 h-10 p-2 flex items-center justify-center border border-[var(--header-border)] rounded-full bg-[var(--header-button-bg)] text-[var(--header-text-primary)] hover:bg-[var(--header-button-hover)] transition-colors duration-200`}
             >
               <Instagram className="w-5 h-5" />
             </a>
@@ -117,7 +116,7 @@ const Header = ({ toggleBasket, basketVisible }) => {
               href="https://twitter.com/YOUR_PAGE"
               target="_blank"
               rel="noopener noreferrer"
-              className={`p-2 border border-[var(--header-border)] rounded-2xl bg-[var(--header-button-bg)] text-[var(--header-text-primary)] hover:bg-[var(--header-button-hover)] transition-colors duration-200`}
+              className={`w-10 h-10 p-2 flex items-center justify-center border border-[var(--header-border)] rounded-full bg-[var(--header-button-bg)] text-[var(--header-text-primary)] hover:bg-[var(--header-button-hover)] transition-colors duration-200`}
             >
               <Twitter className="w-5 h-5" />
             </a>

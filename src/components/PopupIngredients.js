@@ -4,7 +4,7 @@ import '../colors/popupIngredientsColors.css';
 const PopupIngredients = ({ item, onClose, onAddToBasket }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-full max-w-[500px] max-h-[90vh] flex flex-col mx-auto">
+      <div className="w-full max-w-[500px] max-h-[90vh] flex flex-col mx-auto" style={{ maxWidth: '95vw', maxHeight: '90vh' }}>
         <div className="rounded-[30px] bg-[var(--popup-container-bg)] text-[var(--popup-header-text)] w-full overflow-hidden flex flex-col">
           {item.image_url && (
             <div className="relative w-full h-[300px] flex-shrink-0">
@@ -15,7 +15,7 @@ const PopupIngredients = ({ item, onClose, onAddToBasket }) => {
               />
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 w-8 h-8 bg-[var(--popup-close-button-bg)] text-[var(--popup-close-button-text)] hover:text-[var(--popup-close-button-hover-text)] rounded-full border border-[var(--popup-close-button-border)] flex items-center justify-center shadow-md"
+                className="absolute top-4 right-4 w-11 h-11 min-w-[44px] min-h-[44px] bg-[var(--popup-close-button-bg)] text-[var(--popup-close-button-text)] hover:text-[var(--popup-close-button-hover-text)] rounded-full border border-[var(--popup-close-button-border)] flex items-center justify-center shadow-md"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />

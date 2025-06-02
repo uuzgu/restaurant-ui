@@ -91,9 +91,10 @@ const HomePage = () => {
                 <button
                   key={index}
                   onClick={() => setCurrentIndex(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                    index === currentIndex ? 'bg-[var(--home-text-primary)] w-4' : 'bg-[var(--home-text-secondary)]'
-                  }`}
+                  className={`rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-400
+                    w-3 h-3 sm:w-4 sm:h-4 min-w-[24px] min-h-[24px] flex items-center justify-center
+                    ${index === currentIndex ? 'bg-[var(--home-text-primary)] scale-110 shadow-md' : 'bg-[var(--home-text-secondary)]'}`}
+                  aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
             </div>

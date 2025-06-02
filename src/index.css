@@ -228,6 +228,7 @@ body {
     min-height: 44px;
     min-width: 44px;
     padding: 0.75rem;
+    font-size: 1rem;
   }
 
   /* Adjust popup for mobile */
@@ -239,6 +240,10 @@ body {
     width: 95%;
     max-width: 95%;
     margin: 1rem auto;
+  }
+
+  .item-description, .item-name, .item-price, .category-list span, .basket-summary, .basket-summary .item-details h3, .basket-summary .ingredient-label, .basket-summary .ingredient-group p:not(.ingredient-label), .basket-summary .quantity {
+    font-size: 0.875rem !important;
   }
 }
 
