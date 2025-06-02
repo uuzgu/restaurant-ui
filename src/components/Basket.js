@@ -188,7 +188,7 @@ const Basket = ({
 
   return (
     <div
-      className={`basket-panel fixed right-0 z-50 transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col w-full max-w-md h-[calc(100vh-96px)] mobile-basket-panel`}
+      className={`basket-panel fixed right-0 z-50 transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col w-full max-w-md h-[calc(100vh-96px)] mobile-basket-panel translate-y-0`}
       style={{ top: '96px' }}
     >
       {/* Removed mobile basket header and close button */}
