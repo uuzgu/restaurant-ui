@@ -339,9 +339,10 @@ body {
 }
 
 .ingredient-popup > div {
-  background-color: var(--popup-container-bg);
-  box-shadow: var(--popup-container-shadow);
-  border: 1px solid var(--popup-container-border);
+  width: 100%;
+  max-width: 95vw;
+  min-width: 0;
+  border-radius: 1.5rem;
 }
 
 .popup-content {
@@ -590,3 +591,43 @@ body {
 .basket-summary .total-price span:last-child {
   @apply text-xl font-bold text-red-500;
 }
+
+/* --- Ingredient Popup Responsive Sizing --- */
+@media (max-width: 640px) {
+  .ingredient-popup > div {
+    max-width: 98vw;
+    min-width: 0;
+    padding: 0.5rem;
+    border-radius: 1rem;
+  }
+  .ingredient-popup .popup-content {
+    max-width: 98vw;
+    padding: 0.5rem;
+    font-size: 0.97rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .ingredient-popup > div {
+    max-width: 600px;
+    padding: 1.5rem 1rem;
+    border-radius: 1.25rem;
+  }
+  .ingredient-popup .popup-content {
+    max-width: 600px;
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .ingredient-popup > div {
+    max-width: 700px;
+    padding: 2rem 1.5rem;
+    border-radius: 1.5rem;
+  }
+  .ingredient-popup .popup-content {
+    max-width: 700px;
+    font-size: 1.05rem;
+  }
+}
+/* --- End Ingredient Popup Responsive Sizing --- */

@@ -1038,21 +1038,24 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
             </div>
           </div>
         </div>
-        <div className={`basket-section ${basketVisible ? "basket-visible" : ""}`}>
-          <Basket
-            basket={basket}
-            toggleQuantityVisibility={toggleQuantityVisibility}
-            increaseQuantity={increaseQuantity}
-            decreaseQuantity={decreaseQuantity}
-            removeFromBasket={removeFromBasket}
-            confirmQuantity={confirmQuantity}
-            translations={translations}
-            language={language}
-            basketVisible={basketVisible}
-            orderMethod={orderMethod}
-            onOrderMethodChange={handleOrderMethodChange}
-          />
-        </div>
+        {/* Basket Section - Only render when basketVisible is true */}
+        {basketVisible && (
+          <div className="basket-section basket-visible">
+            <Basket
+              basket={basket}
+              toggleQuantityVisibility={toggleQuantityVisibility}
+              increaseQuantity={increaseQuantity}
+              decreaseQuantity={decreaseQuantity}
+              removeFromBasket={removeFromBasket}
+              confirmQuantity={confirmQuantity}
+              translations={translations}
+              language={language}
+              basketVisible={basketVisible}
+              orderMethod={orderMethod}
+              onOrderMethodChange={handleOrderMethodChange}
+            />
+          </div>
+        )}
       </div>
 
       {showPopup && selectedItem && (
