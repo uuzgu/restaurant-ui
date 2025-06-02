@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Get the base URL from the current window location
 const getBaseUrl = () => {
-  return 'https://restaurant-api.onrender.com';
+  return 'https://restaurant-api-923e.onrender.com';
 };
 
 const API_URL = `${getBaseUrl()}/api/Stripe`; // Note the capital S in Stripe
