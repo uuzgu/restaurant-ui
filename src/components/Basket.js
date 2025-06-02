@@ -144,23 +144,6 @@ const Basket = ({
   const warningShownRef = useRef(false);
   const basketRef = useRef(null);
 
-  // Dynamically set basket top and height based on header
-  useEffect(() => {
-    function updateBasketPosition() {
-      const header = document.querySelector('.main-header');
-      const basket = basketRef.current;
-      if (basket) {
-        const headerHeight = header ? header.offsetHeight : 96;
-        basket.style.top = headerHeight + 'px';
-        basket.style.height = `calc(100vh - ${headerHeight}px)`;
-        console.log('Basket headerHeight:', headerHeight);
-      }
-    }
-    updateBasketPosition();
-    window.addEventListener('resize', updateBasketPosition);
-    return () => window.removeEventListener('resize', updateBasketPosition);
-  }, []);
-
   // Show coupon warning only when coming from checkout or when basket is modified
   useEffect(() => {
     // Show warning if coming from checkout
@@ -207,10 +190,10 @@ const Basket = ({
   return (
     <div
       ref={basketRef}
-      className={`basket-panel fixed right-0 z-[1000] transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col ${
+      className={`basket-panel fixed z-[1000] transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col ${
         window.innerWidth < 800 
-          ? 'w-full max-w-full mobile-basket-panel' 
-          : 'w-full max-w-md'
+          ? 'w-full max-w-full bottom-0 left-0 right-0 mobile-basket-panel' 
+          : 'w-full max-w-md top-[96px] right-4'
       } ${
         basketVisible ? 'translate-y-0' : 'translate-y-full'
       }`}
