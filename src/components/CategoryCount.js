@@ -10,7 +10,7 @@ const CategoryCount = ({ categories, activeCategory, setActiveCategory, scrollTo
 
   // Default category image mapping for fallback
   const defaultCategoryImages = {
-    "0": "/images/categories/pizzaCategoryListpng.png", // Will be added later
+    "0": "/images/categories/pizzaCategoryListpng.png", // Using pizza image for promotions
     "1": "/images/categories/pizzaCategoryListpng.png",
     "2": "/images/categories/bowlCategory.png",
     "3": "/images/categories/cheeseburgerCategoryList.png",

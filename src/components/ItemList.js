@@ -127,7 +127,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
 
   const categorizedItems = items.reduce((acc, item) => {
     const categoryId = item?.category_id;
-    if (!categoryId && categoryId !== 0) return acc;  // Allow categoryId 0 (promotions)
+    if (categoryId === undefined || categoryId === null) return acc;  // Only filter out undefined/null
     if (!acc[categoryId]) acc[categoryId] = [];
     acc[categoryId].push(item);
     return acc;
