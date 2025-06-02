@@ -1126,11 +1126,12 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
                             .map((option) => (
                               <div 
                                 key={`${option.id}-${option.name}`} 
-                                className={`flex items-center justify-between p-2 rounded-lg bg-[var(--popup-item-bg)] text-[var(--popup-item-text)] border border-[var(--popup-item-border)] hover:bg-[var(--popup-item-hover-bg)] ${
-                                  selectedIngredients.some(ing => ing.id === option.id && ing.type === 'selection') 
-                                    ? 'bg-[var(--popup-item-selected-bg)] text-[var(--popup-item-selected-text)]' 
-                                    : ''
-                                }`}
+                                className={`flex items-center justify-between p-2 rounded-lg border border-[var(--popup-item-border)] transition-all duration-200
+                                  ${selectedIngredients.some(ing => ing.id === option.id && ing.type === 'selection')
+                                    ? 'bg-red-100 dark:bg-[var(--popup-item-selected-bg)] text-[var(--popup-item-selected-text)] border-red-300 dark:border-[var(--popup-item-selected-bg)]'
+                                    : 'bg-[var(--popup-item-bg)] text-[var(--popup-item-text)] hover:bg-[var(--popup-item-hover-bg)]'}
+                                `}
+                                style={{ minHeight: '56px', marginBottom: '8px' }}
                               >
                                 <div className="flex items-center space-x-2">
                                   {group.type === 'EXCLUSIONS' ? (
@@ -1213,22 +1214,22 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
                                   )}
                                   <span className="text-[var(--popup-item-text)]">{option.name}</span>
                                 </div>
-                                <div className="flex items-center space-x-4">
+                                <div className="flex items-center space-x-2 sm:space-x-4">
                                   {group.type === 'MULTIPLE' && group.type !== 'EXCLUSIONS' && selectedIngredients.some(
                                     ing => ing.id === option.id && ing.type === 'selection'
                                   ) && (
-                                    <div className="flex items-center space-x-1">
+                                    <div className="flex items-center space-x-1 bg-white dark:bg-gray-800 rounded-full px-2 py-1 border border-gray-200 dark:border-gray-700">
                                       <button
                                         onClick={() => updateIngredientQuantity({
                                           ...option,
                                           type: 'selection',
                                           groupId: group.id
                                         }, -1)}
-                                        className="w-6 h-6 flex items-center justify-center rounded-full bg-[var(--popup-button-bg)] text-[var(--popup-button-text)] hover:bg-[var(--popup-button-hover-bg)]"
+                                        className="w-7 h-7 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 text-lg font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition"
                                       >
                                         -
                                       </button>
-                                      <span className="w-6 text-center text-[var(--popup-item-text)]">
+                                      <span className="w-6 text-center text-[var(--popup-item-text)] font-semibold">
                                         {ingredientQuantities[option.id] || 0}
                                       </span>
                                       <button
@@ -1237,7 +1238,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
                                           type: 'selection',
                                           groupId: group.id
                                         }, 1)}
-                                        className="w-6 h-6 flex items-center justify-center rounded-full bg-[var(--popup-button-bg)] text-[var(--popup-button-text)] hover:bg-[var(--popup-button-hover-bg)]"
+                                        className="w-7 h-7 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 text-lg font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition"
                                       >
                                         +
                                       </button>
@@ -1269,9 +1270,9 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
                 </div>
               </div>
 
-              <div className="sticky bottom-0 left-0 right-0 bg-[var(--popup-container-bg)] border-t border-[var(--popup-container-border)]">
-                <div className="flex flex-col w-full px-6 py-4 gap-4">
-                  <div className="flex items-center justify-between gap-4">
+              <div className="sticky bottom-0 left-0 right-0 bg-[var(--popup-container-bg)] border-t border-[var(--popup-container-border)] w-full min-w-0">
+                <div className="flex flex-col w-full px-2 sm:px-6 py-4 gap-4">
+                  <div className="flex items-center justify-between gap-4 w-full min-w-0">
                     <div className="flex items-center border border-[var(--popup-button-border)] rounded-2xl bg-[var(--popup-button-bg)] shadow-sm h-10">
                       <button
                         onClick={() => updatePopupItemQuantity(-1)}
@@ -1292,7 +1293,8 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
 
                     <button
                       onClick={handleAddToBasket}
-                      className="flex justify-between items-center border border-[var(--popup-button-primary-border)] bg-[var(--popup-button-primary-bg)] text-[var(--popup-button-primary-text)] px-6 h-10 rounded-2xl hover:bg-[var(--popup-button-primary-hover-bg)] font-medium shadow-sm min-w-[200px]"
+                      className="flex justify-between items-center border border-[var(--popup-button-primary-border)] bg-[var(--popup-button-primary-bg)] text-[var(--popup-button-primary-text)] px-6 h-10 rounded-2xl hover:bg-[var(--popup-button-primary-hover-bg)] font-medium shadow-sm min-w-0 w-full sm:w-auto"
+                      style={{ maxWidth: '320px' }}
                     >
                       <span className="text-sm flex items-center">
                         {translations[language].addToBasket}

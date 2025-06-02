@@ -187,14 +187,8 @@ const Basket = ({
 
   return (
     <div
-      className={`
-        basket-panel
-        ${darkMode ? "dark" : ""}
-        transform transition-transform duration-700 ease-in-out
-        ${basketVisible ? "translate-y-0" : "translate-y-full"}
-        fixed bottom-0 left-0 right-0 w-full
-        md:right-0 md:left-auto md:top-[180px] md:w-auto
-      `}
+      className={`basket-panel fixed right-0 z-50 transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col w-full max-w-md h-[calc(100vh-96px)]`}
+      style={{ top: '96px' }}
     >
       {/* Order Method Toggle */}
       <div className="order-toggle mb-6">
