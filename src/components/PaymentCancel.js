@@ -21,10 +21,13 @@ const PaymentCancel = () => {
         const params = new URLSearchParams(location.search);
         const sessionId = params.get('session_id') || params.get('sessionId');
 
+        console.log('Payment Cancel Page - Full URL:', window.location.href);
+        console.log('Payment Cancel Page - Search Params:', location.search);
         console.log('Payment Cancel Page - Session ID:', sessionId);
         console.log('Payment Cancel Page - Location State:', location.state);
 
         if (!sessionId) {
+          console.error('No session ID found in URL. Full URL:', window.location.href);
           throw new Error('No session ID found in URL');
         }
 
@@ -40,6 +43,11 @@ const PaymentCancel = () => {
         }
       } catch (err) {
         console.error('Payment cancellation error:', err);
+        console.error('Error stack:', err.stack);
+        if (err.response) {
+          console.error('Error response data:', err.response.data);
+          console.error('Error status:', err.response.status);
+        }
         setError(err.message || 'Failed to process payment cancellation');
       } finally {
         setLoading(false);

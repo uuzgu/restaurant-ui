@@ -22,9 +22,11 @@ const PaymentSuccess = () => {
 
         // Get session ID from URL or localStorage
         const params = new URLSearchParams(location.search);
-        const sessionId = params.get('session_id');
+        const sessionId = params.get('session_id') || params.get('sessionId');
         const paymentMethod = params.get('payment_method') || 'stripe';
 
+        console.log('Payment Success Page - Full URL:', window.location.href);
+        console.log('Payment Success Page - Search Params:', location.search);
         console.log('Payment Success Page - Session ID:', sessionId);
         console.log('Payment Success Page - Payment Method:', paymentMethod);
         console.log('Payment Success Page - Location State:', location.state);
@@ -62,6 +64,7 @@ const PaymentSuccess = () => {
         } else {
           // For Stripe payments, fetch the order details
           if (!sessionId) {
+            console.error('No session ID found in URL. Full URL:', window.location.href);
             throw new Error('No session ID found in URL');
           }
           console.log('Fetching Stripe order details for session:', sessionId);
@@ -71,6 +74,11 @@ const PaymentSuccess = () => {
         }
       } catch (err) {
         console.error('Error fetching order details:', err);
+        console.error('Error stack:', err.stack);
+        if (err.response) {
+          console.error('Error response data:', err.response.data);
+          console.error('Error status:', err.response.status);
+        }
         setError(err.message || 'Failed to fetch order details');
       } finally {
         setLoading(false);

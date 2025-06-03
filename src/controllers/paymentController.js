@@ -2,7 +2,12 @@ import axios from 'axios';
 
 // Get the base URL from the environment variable or fallback to deployed API
 const getBaseUrl = () => {
-  return process.env.REACT_APP_API_URL || 'https://restaurant-api-923e.onrender.com';
+  // In production, always use the deployed API URL
+  if (window.location.hostname !== 'localhost') {
+    return 'https://restaurant-api-923e.onrender.com';
+  }
+  // In development, use the environment variable or localhost
+  return process.env.REACT_APP_API_URL || 'http://localhost:5019';
 };
 
 // Centralized API endpoint configuration
