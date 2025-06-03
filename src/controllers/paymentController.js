@@ -2,14 +2,16 @@ import axios from 'axios';
 
 // Get the base URL from the environment variable or fallback to deployed API
 const getBaseUrl = () => {
-  // In production, always use the deployed API URL
+  // In production, use the environment variable or fallback to deployed API
   if (window.location.hostname !== 'localhost') {
-    console.log('Using production API URL');
-    return 'https://restaurant-api-923e.onrender.com';
+    const prodUrl = process.env.REACT_APP_API_URL || 'https://restaurant-api-923e.onrender.com';
+    console.log('Using production API URL:', prodUrl);
+    return prodUrl;
   }
   // In development, use the environment variable or localhost
-  console.log('Using development API URL');
-  return process.env.REACT_APP_API_URL || 'http://localhost:5019';
+  const devUrl = process.env.REACT_APP_API_URL || 'http://localhost:5019';
+  console.log('Using development API URL:', devUrl);
+  return devUrl;
 };
 
 // Centralized API endpoint configuration
@@ -375,20 +377,27 @@ export const handlePaymentSuccess = async (sessionId) => {
 
 export const handlePaymentCancel = async (sessionId) => {
   try {
-    if (sessionId) {
-      const apiUrl = getApiUrl(API_ENDPOINTS.STRIPE.PAYMENT_CANCEL);
-      console.log('Making cancel request to:', apiUrl);
-      
-      await axios.post(
-        apiUrl,
-        { sessionId },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+    // Try to get session ID from URL parameters first, then localStorage
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionIdFromUrl = urlParams.get('session_id') || urlParams.get('sessionId');
+    const sessionIdToUse = sessionIdFromUrl || sessionId || localStorage.getItem('stripeSessionId');
+    
+    console.log('Session ID from URL:', sessionIdFromUrl);
+    console.log('Session ID from props:', sessionId);
+    console.log('Session ID from localStorage:', localStorage.getItem('stripeSessionId'));
+    console.log('Using session ID:', sessionIdToUse);
+    
+    if (!sessionIdToUse) {
+      console.error('No session ID available from any source');
+      throw new Error('No session ID available');
     }
+
+    const apiUrl = getApiUrl(API_ENDPOINTS.STRIPE.PAYMENT_CANCEL);
+    console.log('Making cancel request to:', apiUrl);
+    
+    // Make a GET request with the session ID as a query parameter
+    await axios.get(`${apiUrl}?session_id=${encodeURIComponent(sessionIdToUse)}`);
+    
     localStorage.removeItem('stripeSessionId');
     return true;
   } catch (error) {
