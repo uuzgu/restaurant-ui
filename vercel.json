@@ -1,5 +1,4 @@
 {
-  // Vercel configuration for routing
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
