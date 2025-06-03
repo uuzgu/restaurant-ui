@@ -266,6 +266,18 @@ export const createCheckoutSession = async ({ items, customerInfo, orderMethod, 
       throw new Error('No Stripe checkout URL received');
     }
 
+    // Store the session ID in localStorage before redirecting
+    if (paymentMethod === 'stripe' && response.data.sessionId) {
+      localStorage.setItem('stripeSessionId', response.data.sessionId);
+      // Also store checkout data for potential retry
+      localStorage.setItem('checkoutData', JSON.stringify({
+        items,
+        customerInfo,
+        orderMethod,
+        paymentMethod
+      }));
+    }
+
     // Return the session URL and order details
     return {
       url: response.data.url,

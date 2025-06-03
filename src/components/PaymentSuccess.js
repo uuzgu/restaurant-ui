@@ -25,6 +25,10 @@ const PaymentSuccess = () => {
         const sessionId = params.get('session_id');
         const paymentMethod = params.get('payment_method') || 'stripe';
 
+        console.log('Payment Success Page - Session ID:', sessionId);
+        console.log('Payment Success Page - Payment Method:', paymentMethod);
+        console.log('Payment Success Page - Location State:', location.state);
+
         // Check if we have order details in location state
         if (location.state?.orderDetails) {
           console.log('Using order details from location state:', location.state.orderDetails);
@@ -57,6 +61,9 @@ const PaymentSuccess = () => {
           }
         } else {
           // For Stripe payments, fetch the order details
+          if (!sessionId) {
+            throw new Error('No session ID found in URL');
+          }
           console.log('Fetching Stripe order details for session:', sessionId);
           const result = await handlePaymentSuccess(sessionId);
           console.log('Received Stripe order details:', result);

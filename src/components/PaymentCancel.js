@@ -21,21 +21,26 @@ const PaymentCancel = () => {
         const params = new URLSearchParams(location.search);
         const sessionId = params.get('session_id') || params.get('sessionId');
 
-        if (sessionId) {
-          // Handle payment cancellation with backend
-          await handlePaymentCancel(sessionId);
+        console.log('Payment Cancel Page - Session ID:', sessionId);
+        console.log('Payment Cancel Page - Location State:', location.state);
+
+        if (!sessionId) {
+          throw new Error('No session ID found in URL');
         }
+
+        // Handle payment cancellation with backend
+        await handlePaymentCancel(sessionId);
 
         // Get the stored checkout data
         const storedData = localStorage.getItem('checkoutData');
         if (storedData) {
           const parsedData = JSON.parse(storedData);
-          console.log('Retrieved checkout data:', parsedData); // Debug log
+          console.log('Retrieved checkout data:', parsedData);
           setStoredCheckoutData(parsedData);
         }
       } catch (err) {
         console.error('Payment cancellation error:', err);
-        setError(err.message);
+        setError(err.message || 'Failed to process payment cancellation');
       } finally {
         setLoading(false);
       }
