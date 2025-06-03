@@ -5,8 +5,8 @@
     { "source": "/manifest.json", "destination": "/manifest.json" },
     { "source": "/logo192.png", "destination": "/logo192.png" },
     { "source": "/logo512.png", "destination": "/logo512.png" },
-    { "source": "/payment/success", "destination": "/index.html" },
-    { "source": "/payment/cancel", "destination": "/index.html" },
+    { "source": "/payment/success(.*)", "destination": "/index.html$1" },
+    { "source": "/payment/cancel(.*)", "destination": "/index.html$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
