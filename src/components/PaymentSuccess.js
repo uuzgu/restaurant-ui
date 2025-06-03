@@ -22,11 +22,22 @@ const PaymentSuccess = () => {
 
         // Get session ID from URL or localStorage
         const params = new URLSearchParams(location.search);
-        const sessionId = params.get('session_id') || params.get('sessionId');
+        let sessionId = params.get('session_id') || params.get('sessionId');
         const paymentMethod = params.get('payment_method') || 'stripe';
+
+        // Fallback: Try to extract session ID from the raw URL if not found in params
+        if (!sessionId) {
+          const match = window.location.href.match(/[?&]session_id=([^&]+)/);
+          if (match) {
+            sessionId = decodeURIComponent(match[1]);
+            console.log('Extracted session ID from URL:', sessionId);
+          }
+        }
 
         console.log('Payment Success Page - Full URL:', window.location.href);
         console.log('Payment Success Page - Search Params:', location.search);
+        console.log('Payment Success Page - Raw Search String:', window.location.search);
+        console.log('Payment Success Page - Decoded Search String:', decodeURIComponent(window.location.search));
         console.log('Payment Success Page - Session ID:', sessionId);
         console.log('Payment Success Page - Payment Method:', paymentMethod);
         console.log('Payment Success Page - Location State:', location.state);

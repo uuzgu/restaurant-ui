@@ -1,7 +1,42 @@
 {
-  "rewrites": [
-    { "source": "/payment/cancel(.*)", "destination": "/index.html" },
-    { "source": "/payment/success(.*)", "destination": "/index.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/payment/cancel(.*)",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/payment/success(.*)",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    },
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/asset-manifest.json",
+      "dest": "/asset-manifest.json"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
   ]
 } 
