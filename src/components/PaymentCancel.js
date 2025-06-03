@@ -26,13 +26,17 @@ const PaymentCancel = () => {
         console.log('Payment Cancel Page - Session ID:', sessionId);
         console.log('Payment Cancel Page - Location State:', location.state);
 
-        if (!sessionId) {
-          console.error('No session ID found in URL. Full URL:', window.location.href);
-          throw new Error('No session ID found in URL');
+        // Try to get session ID from localStorage if not in URL
+        const storedSessionId = localStorage.getItem('stripeSessionId');
+        const sessionIdToUse = sessionId || storedSessionId;
+
+        if (!sessionIdToUse) {
+          console.error('No session ID found in URL or localStorage');
+          throw new Error('No session ID found');
         }
 
         // Handle payment cancellation with backend
-        await handlePaymentCancel(sessionId);
+        await handlePaymentCancel(sessionIdToUse);
 
         // Get the stored checkout data
         const storedData = localStorage.getItem('checkoutData');
@@ -47,6 +51,7 @@ const PaymentCancel = () => {
         if (err.response) {
           console.error('Error response data:', err.response.data);
           console.error('Error status:', err.response.status);
+          console.error('Error headers:', err.response.headers);
         }
         setError(err.message || 'Failed to process payment cancellation');
       } finally {

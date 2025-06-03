@@ -67,8 +67,18 @@ const PaymentSuccess = () => {
             console.error('No session ID found in URL. Full URL:', window.location.href);
             throw new Error('No session ID found in URL');
           }
-          console.log('Fetching Stripe order details for session:', sessionId);
-          const result = await handlePaymentSuccess(sessionId);
+
+          // Try to get session ID from localStorage if not in URL
+          const storedSessionId = localStorage.getItem('stripeSessionId');
+          const sessionIdToUse = sessionId || storedSessionId;
+          
+          if (!sessionIdToUse) {
+            console.error('No session ID found in URL or localStorage');
+            throw new Error('No session ID found');
+          }
+
+          console.log('Fetching Stripe order details for session:', sessionIdToUse);
+          const result = await handlePaymentSuccess(sessionIdToUse);
           console.log('Received Stripe order details:', result);
           setOrderDetails(result);
         }
@@ -78,6 +88,7 @@ const PaymentSuccess = () => {
         if (err.response) {
           console.error('Error response data:', err.response.data);
           console.error('Error status:', err.response.status);
+          console.error('Error headers:', err.response.headers);
         }
         setError(err.message || 'Failed to fetch order details');
       } finally {

@@ -4,9 +4,11 @@ import axios from 'axios';
 const getBaseUrl = () => {
   // In production, always use the deployed API URL
   if (window.location.hostname !== 'localhost') {
+    console.log('Using production API URL');
     return 'https://restaurant-api-923e.onrender.com';
   }
   // In development, use the environment variable or localhost
+  console.log('Using development API URL');
   return process.env.REACT_APP_API_URL || 'http://localhost:5019';
 };
 
@@ -26,7 +28,12 @@ const API_ENDPOINTS = {
 };
 
 // Helper function to construct full API URLs
-const getApiUrl = (endpoint) => `${getBaseUrl()}${endpoint}`;
+const getApiUrl = (endpoint) => {
+  const baseUrl = getBaseUrl();
+  const fullUrl = `${baseUrl}${endpoint}`;
+  console.log('Constructed API URL:', fullUrl);
+  return fullUrl;
+};
 
 export const createCashOrder = async ({ items, customerInfo, orderMethod }) => {
   try {
@@ -318,17 +325,27 @@ export const handlePaymentSuccess = async (sessionId) => {
   try {
     console.log('Handling payment success for session:', sessionId);
     
-    const sessionIdToUse = sessionId || localStorage.getItem('stripeSessionId');
+    // Try to get session ID from URL parameters first, then localStorage
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionIdFromUrl = urlParams.get('session_id') || urlParams.get('sessionId');
+    const sessionIdToUse = sessionIdFromUrl || sessionId || localStorage.getItem('stripeSessionId');
+    
+    console.log('Session ID from URL:', sessionIdFromUrl);
+    console.log('Session ID from props:', sessionId);
+    console.log('Session ID from localStorage:', localStorage.getItem('stripeSessionId'));
     console.log('Using session ID:', sessionIdToUse);
     
     if (!sessionIdToUse) {
+      console.error('No session ID available from any source');
       throw new Error('No session ID available');
     }
 
+    const apiUrl = getApiUrl(API_ENDPOINTS.STRIPE.PAYMENT_SUCCESS);
+    const fullUrl = `${apiUrl}?session_id=${encodeURIComponent(sessionIdToUse)}`;
+    console.log('Making request to:', fullUrl);
+
     // Call the backend to verify the payment
-    const response = await axios.get(
-      `${getApiUrl(API_ENDPOINTS.STRIPE.PAYMENT_SUCCESS)}?session_id=${sessionIdToUse}`
-    );
+    const response = await axios.get(fullUrl);
     console.log('Payment success response:', response.data);
 
     if (!response.data) {
@@ -347,6 +364,11 @@ export const handlePaymentSuccess = async (sessionId) => {
     };
   } catch (error) {
     console.error('Error handling payment success:', error);
+    if (error.response) {
+      console.error('Error response status:', error.response.status);
+      console.error('Error response data:', error.response.data);
+      console.error('Error response headers:', error.response.headers);
+    }
     throw new Error(error.response?.data?.message || error.message || 'Failed to process payment success');
   }
 };
@@ -354,8 +376,11 @@ export const handlePaymentSuccess = async (sessionId) => {
 export const handlePaymentCancel = async (sessionId) => {
   try {
     if (sessionId) {
+      const apiUrl = getApiUrl(API_ENDPOINTS.STRIPE.PAYMENT_CANCEL);
+      console.log('Making cancel request to:', apiUrl);
+      
       await axios.post(
-        getApiUrl(API_ENDPOINTS.STRIPE.PAYMENT_CANCEL),
+        apiUrl,
         { sessionId },
         {
           headers: {
@@ -368,6 +393,11 @@ export const handlePaymentCancel = async (sessionId) => {
     return true;
   } catch (error) {
     console.error('Error handling payment cancellation:', error);
+    if (error.response) {
+      console.error('Error response status:', error.response.status);
+      console.error('Error response data:', error.response.data);
+      console.error('Error response headers:', error.response.headers);
+    }
     throw new Error('Failed to process payment cancellation');
   }
 };
