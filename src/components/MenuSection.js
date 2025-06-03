@@ -1,11 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { allergenDescriptions } from '../assets/allergenDescriptions';
 import './MenuSection.css';
 import '../colors/menuSectionColors.css';
 
 const Tooltip = ({ text, position, allergen }) => {
-  // Define allergen-specific colors and styles using CSS variables
+  const [style, setStyle] = useState(null);
+  const tooltipRef = React.useRef();
+
+  useEffect(() => {
+    if (tooltipRef.current) {
+      const tooltipRect = tooltipRef.current.getBoundingClientRect();
+      let left = position.x;
+      let transform = 'translateX(-50%)';
+      const padding = 8; // px from edge
+      if (left - tooltipRect.width / 2 < padding) {
+        left = padding;
+        transform = 'none';
+      } else if (left + tooltipRect.width / 2 > window.innerWidth - padding) {
+        left = window.innerWidth - padding;
+        transform = 'translateX(-100%)';
+      }
+      setStyle({
+        position: 'fixed',
+        left,
+        top: position.y,
+        backgroundColor: styleObj.bgColor,
+        color: styleObj.textColor,
+        padding: '16px 20px',
+        borderRadius: '12px',
+        fontSize: '15px',
+        lineHeight: '1.6',
+        zIndex: 9999,
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.05)',
+        pointerEvents: 'none',
+        maxWidth: '350px',
+        backdropFilter: 'blur(8px)',
+        border: `1px solid ${styleObj.borderColor}`,
+        transform,
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        fontWeight: '500',
+        letterSpacing: '0.3px',
+        wordBreak: 'break-word',
+      });
+    }
+  }, [position]);
+
   const allergenStyles = {
     'G': {
       bgColor: 'var(--allergen-gluten-bg)',
@@ -29,36 +69,14 @@ const Tooltip = ({ text, position, allergen }) => {
     }
   };
 
-  const style = allergenStyles[allergen] || {
+  const styleObj = allergenStyles[allergen] || {
     bgColor: 'var(--menu-item-card-bg)',
     borderColor: 'var(--menu-item-card-border)',
     textColor: 'var(--menu-item-title)'
   };
 
   return createPortal(
-    <div
-      style={{
-        position: 'fixed',
-        left: position.x,
-        top: position.y,
-        backgroundColor: style.bgColor,
-        color: style.textColor,
-        padding: '16px 20px',
-        borderRadius: '12px',
-        fontSize: '15px',
-        lineHeight: '1.6',
-        zIndex: 9999,
-        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.05)',
-        pointerEvents: 'none',
-        maxWidth: '350px',
-        backdropFilter: 'blur(8px)',
-        border: `1px solid ${style.borderColor}`,
-        transform: 'translateX(-50%)',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        fontWeight: '500',
-        letterSpacing: '0.3px'
-      }}
-    >
+    <div ref={tooltipRef} style={style || {}}>
       {text}
     </div>,
     document.body

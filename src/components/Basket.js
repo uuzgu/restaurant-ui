@@ -193,6 +193,7 @@ const Basket = ({
       className={`basket-panel transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col ${
         basketVisible ? 'translate-y-0' : 'translate-y-full'
       }`}
+      style={{ height: 'calc(100vh - 96px)', display: 'flex', flexDirection: 'column' }}
     >
       {/* Order Method Toggle */}
       <div className="order-toggle">
@@ -299,6 +300,7 @@ const Basket = ({
             : "bg-red-500 text-white hover:bg-green-600"
         }`}
         disabled={basket.length === 0}
+        style={{ flexShrink: 0, margin: '0 1rem 1rem 1rem' }}
       >
         {translations[language].proceedToCheckout}
       </button>
