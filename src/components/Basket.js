@@ -174,6 +174,16 @@ const Basket = ({
     setPreviousBasketState(basket);
   }, [basket, location.state, previousBasketState]);
 
+  // Set --vh CSS variable for mobile viewport height
+  useEffect(() => {
+    const setVh = () => {
+      document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    };
+    setVh();
+    window.addEventListener('resize', setVh);
+    return () => window.removeEventListener('resize', setVh);
+  }, []);
+
   const handleProceedToCheckout = () => {
     navigate('/checkout', { state: { basket, orderMethod } });
   };
@@ -193,7 +203,7 @@ const Basket = ({
       className={`basket-panel transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col ${
         basketVisible ? 'translate-y-0' : 'translate-y-full'
       }`}
-      style={{ height: 'calc(100vh - 96px)', display: 'flex', flexDirection: 'column' }}
+      style={{ height: 'calc(var(--vh, 1vh) * 100 - 96px)', display: 'flex', flexDirection: 'column' }}
     >
       {/* Order Method Toggle */}
       <div className="order-toggle">
@@ -223,7 +233,7 @@ const Basket = ({
       )}
 
       {/* Basket Content */}
-      <div className="basket-content flex-1 overflow-y-auto">
+      <div className="basket-content flex-1 overflow-y-auto min-h-0">
         {basket.length === 0 ? (
           <div className="empty-basket">
             <div className="empty-basket-icon">
