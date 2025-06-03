@@ -1,5 +1,8 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/payment/success", "dest": "/index.html" },
+    { "src": "/payment/cancel", "dest": "/index.html" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 } 
