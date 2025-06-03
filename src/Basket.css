@@ -38,28 +38,42 @@
         right: 0 !important;
         bottom: 0 !important;
         width: 100vw !important;
-        height: calc(100vh - 96px) !important;
+        height: calc(var(--vh, 1vh) * 100 - 96px) !important;
         z-index: 1050 !important;
         display: flex !important;
         flex-direction: column !important;
         border-radius: 1rem 1rem 0 0 !important;
         border: 1px solid var(--basket-container-border) !important;
         background: var(--basket-container-bg) !important;
-        box-shadow: var(--basket-container-shadow) !important;
-        padding: 0 !important;
+        box-shadow: 0 -4px 24px rgba(0,0,0,0.18) !important;
+        padding: 1rem 0.5rem !important;
         margin: 0 !important;
-        overflow: hidden !important;
+        overflow: visible !important;
+        max-width: 100vw !important;
     }
     .order-toggle {
         margin: 1rem 0 0.5rem 0;
         padding: 0 0.5rem;
     }
     .basket-content {
-        flex: 1 1 auto;
+        flex: 1 1 0;
+        min-height: 0;
         overflow-y: auto;
-        padding: 0 0.5rem;
-        margin-bottom: 0.5rem;
-        -webkit-overflow-scrolling: touch;
+    }
+    .basket-footer {
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--basket-container-bg);
+        padding: 1rem;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+        z-index: 10;
+        border-top: 1px solid var(--basket-container-border);
+    }
+    .basket-footer button {
+        width: 100%;
+        margin: 0;
     }
     .basket-total {
         padding: 0.5rem 1rem;
