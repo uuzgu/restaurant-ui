@@ -1057,11 +1057,19 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
         />
       )}
       {showPopup && selectedItem && (
-        <div className="ingredient-popup px-2 sm:px-0">
-          <div className="w-full max-w-[95vw] sm:max-w-[500px] md:max-w-[700px] lg:max-w-[800px] max-h-[90vh] flex flex-col mx-auto bg-[var(--popup-container-bg)] rounded-[30px]" style={{ maxWidth: undefined, maxHeight: '90vh' }}>
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black bg-opacity-30">
+          <div
+            className="w-full max-w-[95vw] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[600px] flex flex-col mx-auto bg-[var(--popup-container-bg)] rounded-[30px] shadow-lg"
+            style={{
+              position: 'relative',
+              top: '110px', // adjust for header height
+              maxHeight: 'calc(100vh - 120px - 24px)', // header + some padding
+              overflowY: 'auto',
+            }}
+          >
             <div className="rounded-[30px] text-[var(--popup-header-text)] w-full overflow-hidden flex flex-col">
               {selectedItem.image_url && (
-                <div className="relative w-full h-[180px] sm:h-[220px] md:h-[300px] flex-shrink-0">
+                <div className="relative w-full h-[180px] sm:h-[220px] md:h-[300px] flex-shrink-0 rounded-[30px] overflow-hidden">
                   <img
                     src={selectedItem.image_url}
                     alt={selectedItem.name || 'Item'}
