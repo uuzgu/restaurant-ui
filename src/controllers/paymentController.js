@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-// Get the base URL from the current window location
+// Get the base URL from the environment variable or fallback to deployed API
 const getBaseUrl = () => {
-  return 'https://restaurant-api-923e.onrender.com';
+  return process.env.REACT_APP_API_URL || 'https://restaurant-api-923e.onrender.com';
 };
 
 // Centralized API endpoint configuration
@@ -213,7 +213,7 @@ export const createCheckoutSession = async ({ items, customerInfo, orderMethod, 
     }, 0);
 
     // Format customer info for API
-    const formattedCustomerInfo = {
+    const customer = {
       FirstName: customerInfo.firstName,
       LastName: customerInfo.lastName,
       Email: customerInfo.email,
@@ -233,7 +233,7 @@ export const createCheckoutSession = async ({ items, customerInfo, orderMethod, 
     // Prepare the request payload
     const requestPayload = {
       items: orderItems,
-      customerInfo: formattedCustomerInfo,
+      customerInfo: customer,
       orderMethod,
       paymentMethod,
       status: 'processing',
