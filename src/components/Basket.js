@@ -203,7 +203,26 @@ const Basket = ({
       className={`basket-panel transition-transform duration-300 bg-[var(--basket-container-bg)] border border-[var(--basket-container-border)] shadow-lg rounded-lg overflow-hidden flex flex-col ${
         basketVisible ? 'translate-y-0' : 'translate-y-full'
       }`}
-      style={{ height: 'calc(var(--vh, 1vh) * 100 - 96px)', display: 'flex', flexDirection: 'column' }}
+      style={{
+        position: 'fixed',
+        top: 96,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100vw',
+        zIndex: 1050,
+        display: 'flex',
+        flexDirection: 'column',
+        background: 'var(--basket-container-bg)',
+        border: '1px solid var(--basket-container-border)',
+        boxShadow: 'var(--basket-container-shadow)',
+        borderRadius: '1rem 1rem 0 0',
+        padding: 0,
+        margin: 0,
+        overflow: 'hidden',
+        height: 'calc(100vh - 96px)',
+        maxHeight: 'calc(100vh - 96px)',
+      }}
     >
       {/* Order Method Toggle */}
       <div className="order-toggle">
