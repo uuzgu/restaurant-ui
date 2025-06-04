@@ -11,20 +11,28 @@
   ],
   "routes": [
     {
-      "src": "/payment/cancel(.*)",
+      "src": "/payment/success",
       "dest": "/index.html"
     },
     {
-      "src": "/payment/success(.*)",
+      "src": "/payment/success/(.*)",
       "dest": "/index.html"
     },
     {
-      "src": "/favicon.ico",
-      "dest": "/favicon.ico"
+      "src": "/payment/cancel",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/payment/cancel/(.*)",
+      "dest": "/index.html"
     },
     {
       "src": "/static/(.*)",
       "dest": "/static/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
     },
     {
       "src": "/asset-manifest.json",

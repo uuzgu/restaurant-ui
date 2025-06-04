@@ -19,16 +19,22 @@ const PaymentCancel = () => {
         setLoading(true);
         // Get session_id from URL query parameters
         const params = new URLSearchParams(location.search);
-        const sessionId = params.get('session_id') || params.get('sessionId');
+        let sessionId = params.get('session_id') || params.get('sessionId');
+        const paymentMethod = params.get('payment_method') || 'stripe';
 
+        // Log all available information for debugging
         console.log('Payment Cancel Page - Full URL:', window.location.href);
         console.log('Payment Cancel Page - Search Params:', location.search);
-        console.log('Payment Cancel Page - Session ID:', sessionId);
-        console.log('Payment Cancel Page - Location State:', location.state);
+        console.log('Payment Cancel Page - Session ID from params:', sessionId);
+        console.log('Payment Cancel Page - Payment Method:', paymentMethod);
 
         // Try to get session ID from localStorage if not in URL
         const storedSessionId = localStorage.getItem('stripeSessionId');
+        console.log('Payment Cancel Page - Stored Session ID:', storedSessionId);
+
+        // Use the first available session ID
         const sessionIdToUse = sessionId || storedSessionId;
+        console.log('Payment Cancel Page - Using Session ID:', sessionIdToUse);
 
         if (!sessionIdToUse) {
           console.error('No session ID found in URL or localStorage');

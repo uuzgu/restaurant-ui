@@ -365,13 +365,20 @@ export const handlePaymentSuccess = async (sessionId) => {
       orderNumber: response.data.orderNumber
     };
   } catch (error) {
-    console.error('Error handling payment success:', error);
+    console.error('=== Payment Success Error ===');
+    console.error('Error:', error);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    
     if (error.response) {
-      console.error('Error response status:', error.response.status);
       console.error('Error response data:', error.response.data);
-      console.error('Error response headers:', error.response.headers);
+      console.error('Error status:', error.response.status);
+      console.error('Error headers:', error.response.headers);
+    } else if (error.request) {
+      console.error('No response received. Request details:', error.request);
     }
-    throw new Error(error.response?.data?.message || error.message || 'Failed to process payment success');
+    
+    throw error;
   }
 };
 
@@ -393,21 +400,30 @@ export const handlePaymentCancel = async (sessionId) => {
     }
 
     const apiUrl = getApiUrl(API_ENDPOINTS.STRIPE.PAYMENT_CANCEL);
-    console.log('Making cancel request to:', apiUrl);
+    const fullUrl = `${apiUrl}?session_id=${encodeURIComponent(sessionIdToUse)}`;
+    console.log('Making cancel request to:', fullUrl);
     
     // Make a GET request with the session ID as a query parameter
-    await axios.get(`${apiUrl}?session_id=${encodeURIComponent(sessionIdToUse)}`);
+    const response = await axios.get(fullUrl);
+    console.log('Payment cancel response:', response.data);
     
     localStorage.removeItem('stripeSessionId');
     return true;
   } catch (error) {
-    console.error('Error handling payment cancellation:', error);
+    console.error('=== Payment Cancel Error ===');
+    console.error('Error:', error);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    
     if (error.response) {
-      console.error('Error response status:', error.response.status);
       console.error('Error response data:', error.response.data);
-      console.error('Error response headers:', error.response.headers);
+      console.error('Error status:', error.response.status);
+      console.error('Error headers:', error.response.headers);
+    } else if (error.request) {
+      console.error('No response received. Request details:', error.request);
     }
-    throw new Error('Failed to process payment cancellation');
+    
+    throw error;
   }
 };
 

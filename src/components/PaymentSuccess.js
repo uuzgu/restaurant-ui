@@ -25,74 +25,31 @@ const PaymentSuccess = () => {
         let sessionId = params.get('session_id') || params.get('sessionId');
         const paymentMethod = params.get('payment_method') || 'stripe';
 
-        // Fallback: Try to extract session ID from the raw URL if not found in params
-        if (!sessionId) {
-          const match = window.location.href.match(/[?&]session_id=([^&]+)/);
-          if (match) {
-            sessionId = decodeURIComponent(match[1]);
-            console.log('Extracted session ID from URL:', sessionId);
-          }
-        }
-
+        // Log all available information for debugging
         console.log('Payment Success Page - Full URL:', window.location.href);
         console.log('Payment Success Page - Search Params:', location.search);
-        console.log('Payment Success Page - Raw Search String:', window.location.search);
-        console.log('Payment Success Page - Decoded Search String:', decodeURIComponent(window.location.search));
-        console.log('Payment Success Page - Session ID:', sessionId);
+        console.log('Payment Success Page - Session ID from params:', sessionId);
         console.log('Payment Success Page - Payment Method:', paymentMethod);
-        console.log('Payment Success Page - Location State:', location.state);
 
-        // Check if we have order details in location state
-        if (location.state?.orderDetails) {
-          console.log('Using order details from location state:', location.state.orderDetails);
-          const orderDetails = location.state.orderDetails;
-          setOrderDetails({
-            orderId: orderDetails.orderId,
-            total: orderDetails.total,
-            status: orderDetails.status || 'pending',
-            paymentMethod: orderDetails.paymentMethod || 'cash',
-            orderNumber: orderDetails.orderNumber || orderDetails.orderId
-          });
-          setLoading(false);
-          return;
+        // Try to get session ID from localStorage if not in URL
+        const storedSessionId = localStorage.getItem('stripeSessionId');
+        console.log('Payment Success Page - Stored Session ID:', storedSessionId);
+
+        // Use the first available session ID
+        const sessionIdToUse = sessionId || storedSessionId;
+        console.log('Payment Success Page - Using Session ID:', sessionIdToUse);
+
+        if (!sessionIdToUse) {
+          console.error('No session ID found in URL or localStorage');
+          throw new Error('No session ID found');
         }
 
-        if (paymentMethod === 'cash') {
-          // For cash payments, we already have the order details
-          const orderId = params.get('order_id');
-          if (orderId) {
-            console.log('Using order ID from URL:', orderId);
-            setOrderDetails({
-              orderId: orderId,
-              status: 'pending',
-              paymentMethod: 'cash',
-              orderNumber: orderId,
-              total: params.get('total') || '0.00'
-            });
-          } else {
-            throw new Error('No order ID found for cash payment');
-          }
-        } else {
-          // For Stripe payments, fetch the order details
-          if (!sessionId) {
-            console.error('No session ID found in URL. Full URL:', window.location.href);
-            throw new Error('No session ID found in URL');
-          }
+        // For Stripe payments, fetch the order details
+        console.log('Fetching Stripe order details for session:', sessionIdToUse);
+        const result = await handlePaymentSuccess(sessionIdToUse);
+        console.log('Received Stripe order details:', result);
+        setOrderDetails(result);
 
-          // Try to get session ID from localStorage if not in URL
-          const storedSessionId = localStorage.getItem('stripeSessionId');
-          const sessionIdToUse = sessionId || storedSessionId;
-          
-          if (!sessionIdToUse) {
-            console.error('No session ID found in URL or localStorage');
-            throw new Error('No session ID found');
-          }
-
-          console.log('Fetching Stripe order details for session:', sessionIdToUse);
-          const result = await handlePaymentSuccess(sessionIdToUse);
-          console.log('Received Stripe order details:', result);
-          setOrderDetails(result);
-        }
       } catch (err) {
         console.error('Error fetching order details:', err);
         console.error('Error stack:', err.stack);
