@@ -117,7 +117,7 @@ const CategoryCount = ({ categories, activeCategory, setActiveCategory, scrollTo
       {/* Scrollable Category List */}
       <div
         ref={categoryListRef}
-        className="category-list flex-1 flex items-center overflow-x-auto space-x-2 sm:space-x-4 md:space-x-6 scrollbar-hide px-2 sm:px-4 md:px-6 pr-8 sm:pr-12 h-full"
+        className="category-list flex-1 flex items-center overflow-x-auto gap-3 px-2 sm:px-4 md:px-6 pr-8 sm:pr-12 h-full scrollbar-hide"
         style={{ WebkitOverflowScrolling: 'touch' }}
         onScroll={updateScrollButtons}
       >
@@ -128,15 +128,15 @@ const CategoryCount = ({ categories, activeCategory, setActiveCategory, scrollTo
               setActiveCategory(category.categoryId);
               scrollToSection(category.categoryId);
             }}
-            className={`h-full min-w-[90px] max-w-[120px] px-2 sm:px-3 md:px-4 py-2 text-sm font-sans whitespace-nowrap flex flex-col items-center justify-center transition-all duration-200 ease-in-out relative overflow-hidden rounded-md focus:outline-none focus:ring-2 focus:ring-red-400
+            className={`h-full px-4 py-2 text-base font-sans flex flex-col items-center justify-center transition-all duration-200 ease-in-out relative overflow-visible rounded-full focus:outline-none focus:ring-2 focus:ring-red-400 min-w-max bg-[var(--category-header-bg)] shadow-sm
               ${
                 activeCategory === category.categoryId
-                  ? "text-[var(--category-header-active)] border-b-2 border-[var(--category-header-active)]"
-                  : "text-[var(--category-header-text)] hover:text-[var(--category-header-active)] hover:border-b-2 hover:border-[var(--category-header-active)]"
+                  ? "text-[var(--category-header-active)] bg-[var(--category-header-bg)]"
+                  : "text-[var(--category-header-text)] hover:text-[var(--category-header-active)]"
               }`}
-            style={{ touchAction: 'manipulation' }}
+            style={{ touchAction: 'manipulation', marginBottom: 0 }}
           >
-            <span className="mb-1 text-xs sm:text-sm truncate w-full block" title={`${category.category} (${category.itemCount})`}>
+            <span className="mb-1 text-sm sm:text-base w-full block whitespace-normal font-semibold text-center" title={`${category.category} (${category.itemCount})`}>
               {category.category} ({category.itemCount})
             </span>
             <img 

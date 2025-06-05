@@ -8,44 +8,6 @@ const Tooltip = ({ text, position, allergen }) => {
   const [style, setStyle] = useState(null);
   const tooltipRef = React.useRef();
 
-  useEffect(() => {
-    if (tooltipRef.current) {
-      const tooltipRect = tooltipRef.current.getBoundingClientRect();
-      let left = position.x;
-      let transform = 'translateX(-50%)';
-      const padding = 8; // px from edge
-      if (left - tooltipRect.width / 2 < padding) {
-        left = padding;
-        transform = 'none';
-      } else if (left + tooltipRect.width / 2 > window.innerWidth - padding) {
-        left = window.innerWidth - padding;
-        transform = 'translateX(-100%)';
-      }
-      setStyle({
-        position: 'fixed',
-        left,
-        top: position.y,
-        backgroundColor: styleObj.bgColor,
-        color: styleObj.textColor,
-        padding: '16px 20px',
-        borderRadius: '12px',
-        fontSize: '15px',
-        lineHeight: '1.6',
-        zIndex: 9999,
-        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.05)',
-        pointerEvents: 'none',
-        maxWidth: '350px',
-        backdropFilter: 'blur(8px)',
-        border: `1px solid ${styleObj.borderColor}`,
-        transform,
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        fontWeight: '500',
-        letterSpacing: '0.3px',
-        wordBreak: 'break-word',
-      });
-    }
-  }, [position]);
-
   const allergenStyles = {
     'G': {
       bgColor: 'var(--allergen-gluten-bg)',
@@ -75,8 +37,69 @@ const Tooltip = ({ text, position, allergen }) => {
     textColor: 'var(--menu-item-title)'
   };
 
+  useEffect(() => {
+    if (tooltipRef.current) {
+      const tooltipRect = tooltipRef.current.getBoundingClientRect();
+      let left = position.x - tooltipRect.width / 2;
+      let top = position.y;
+      const padding = 8;
+
+      // Clamp left edge
+      if (left < padding) {
+        left = padding;
+      }
+      // Clamp right edge
+      if (left + tooltipRect.width > window.innerWidth - padding) {
+        left = window.innerWidth - tooltipRect.width - padding;
+      }
+
+      setStyle({
+        position: 'fixed',
+        left,
+        top,
+        backgroundColor: styleObj.bgColor,
+        color: styleObj.textColor,
+        padding: '16px 20px',
+        borderRadius: '12px',
+        fontSize: '15px',
+        lineHeight: '1.6',
+        zIndex: 9999,
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.05)',
+        pointerEvents: 'none',
+        maxWidth: '350px',
+        backdropFilter: 'blur(8px)',
+        border: `1px solid ${styleObj.borderColor}`,
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        fontWeight: '500',
+        letterSpacing: '0.3px',
+        wordBreak: 'break-word',
+      });
+    }
+  }, [position, styleObj.bgColor, styleObj.borderColor, styleObj.textColor]);
+
   return createPortal(
-    <div ref={tooltipRef} style={style || {}}>
+    <div
+      ref={tooltipRef}
+      style={
+        style || {
+          position: 'fixed',
+          left: position.x,
+          top: position.y,
+          backgroundColor: styleObj.bgColor,
+          color: styleObj.textColor,
+          border: `1px solid ${styleObj.borderColor}`,
+          zIndex: 9999,
+          pointerEvents: 'none',
+          padding: '16px 20px',
+          borderRadius: '12px',
+          fontSize: '15px',
+          fontWeight: '500',
+          letterSpacing: '0.3px',
+          wordBreak: 'break-word',
+          maxWidth: '350px',
+        }
+      }
+    >
       {text}
     </div>,
     document.body

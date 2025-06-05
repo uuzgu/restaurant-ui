@@ -5,7 +5,7 @@ const ApiContext = createContext();
 
 export const ApiProvider = ({ children }) => {
   const api = axios.create({
-    baseURL: (process.env.REACT_APP_API_URL || 'https://restaurant-api-923e.onrender.com') + '/api',
+    baseURL: (process.env.REACT_APP_API_URL || 'http://localhost:5019') + '/api',
     headers: {
       'Content-Type': 'application/json',
     },

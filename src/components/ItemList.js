@@ -71,11 +71,12 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
   const categoryLabels = useMemo(() => {
     const labels = {};
     categories.forEach(category => {
-      if (category && category.id !== undefined && category.name) {
-        labels[category.id] = category.name.toUpperCase();
+      const id = category.id ?? category.Id;
+      const name = category.name ?? category.Name;
+      if (id !== undefined && name) {
+        labels[id] = name.toUpperCase();
       }
     });
-    // Ensure promotions label exists
     labels[0] = "PROMOTIONS";
     return labels;
   }, [categories]);
@@ -1067,7 +1068,21 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
               overflowY: 'auto',
             }}
           >
-            <div className="rounded-[30px] text-[var(--popup-header-text)] w-full overflow-hidden flex flex-col">
+            <div className="rounded-[30px] text-[var(--popup-header-text)] w-full overflow-hidden flex flex-col relative">
+              {/* Always show close button in the popup */}
+              <button
+                onClick={() => {
+                  setShowPopup(false);
+                  setShowRequiredOptionsWarning(false);
+                  document.body.classList.remove('popup-active');
+                }}
+                className="absolute top-2 right-2 sm:top-4 sm:right-4 w-11 h-11 min-w-[44px] min-h-[44px] bg-[var(--popup-close-button-bg)] text-[var(--popup-close-button-text)] hover:text-[var(--popup-close-button-hover-text)] rounded-full border border-[var(--popup-close-button-border)] flex items-center justify-center shadow-md z-10"
+                style={{ zIndex: 100 }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
               {selectedItem.image_url && (
                 <div className="relative w-full h-[180px] sm:h-[220px] md:h-[300px] flex-shrink-0 rounded-[30px] overflow-hidden">
                   <img
@@ -1075,18 +1090,6 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
                     alt={selectedItem.name || 'Item'}
                     className="w-full h-full object-cover"
                   />
-                  <button
-                    onClick={() => {
-                      setShowPopup(false);
-                      setShowRequiredOptionsWarning(false);
-                      document.body.classList.remove('popup-active');
-                    }}
-                    className="absolute top-2 right-2 sm:top-4 sm:right-4 w-11 h-11 min-w-[44px] min-h-[44px] bg-[var(--popup-close-button-bg)] text-[var(--popup-close-button-text)] hover:text-[var(--popup-close-button-hover-text)] rounded-full border border-[var(--popup-close-button-border)] flex items-center justify-center shadow-md z-10"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </button>
                   {showRequiredOptionsWarning && (
                     <div className="absolute bottom-0 left-0 right-0 bg-red-500/90 text-white py-2 px-4 text-center animate-fade-in">
                       Please select required options

@@ -8,14 +8,14 @@
   --order-text-secondary-dark: #9ca3af;
 
   /* Category Header Colors */
-  --category-header-bg-light: #ffffff;
-  --category-header-bg-dark: #1f2937;
+  --category-header-bg-light: #f2eded;
+  --category-header-bg-dark: #37404b;
   --category-header-text-light: #1f2937;
   --category-header-text-dark: #f3f4f6;
   --category-header-active-light: #dc2626;
   --category-header-active-dark: #f87171;
-  --category-header-shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --category-header-shadow-dark: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --category-header-shadow-light: 0 4px 12px rgba(0,0,0,0.10);
+  --category-header-shadow-dark: 0 4px 12px rgba(0,0,0,0.25);
 
   /* Menu Section Colors */
   --menu-bg-light: #ffffff;
@@ -37,11 +37,11 @@
 
   /* Search Colors */
   --search-bg-light: #f3f4f6;
-  --search-bg-dark: #374151;
+  --search-bg-dark: #263753;
   --search-text-light: #1f2937;
   --search-text-dark: #f3f4f6;
   --search-border-light: #e5e7eb;
-  --search-border-dark: #4b5563;
+  --search-border-dark: #17325e;
   --search-placeholder-light: #9ca3af;
   --search-placeholder-dark: #6b7280;
 
