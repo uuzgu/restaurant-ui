@@ -7,6 +7,7 @@ import homeHours from '../assets/homeHours.png';
 import { ChevronLeft, ChevronRight, Clock, Phone, MapPin } from 'lucide-react';
 import { useDarkMode } from '../DarkModeContext';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import OptimizedImage from './OptimizedImage';
 import '../colors/homeColors.css';
 
 const HomePage = () => {
@@ -55,7 +56,7 @@ const HomePage = () => {
         <div className="relative pt-32 h-[600px] sm:h-[700px] overflow-hidden rounded-2xl z-10 mb-12">
           <div className="relative w-full h-full">
             {images.map((img, index) => (
-              <img
+              <OptimizedImage
                 key={index}
                 src={img}
                 alt={`Slide ${index + 1}`}
@@ -63,6 +64,9 @@ const HomePage = () => {
                   absolute top-0 left-0 w-full h-full object-cover rounded-2xl transition-opacity duration-1000 ease-in-out
                   ${index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}
                 `}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                sizes="100vw"
+                quality={85}
               />
             ))}
             {/* Overlay gradient */}
