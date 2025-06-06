@@ -12,17 +12,22 @@ const OptimizedImage = ({
   quality = 75,
   ...props
 }) => {
-  // Convert image path to WebP if it's a local image
+  // Check if the image is a local asset (imported) or a remote URL
+  const isLocalAsset = typeof src === 'string' && !src.startsWith('http') && !src.startsWith('data:');
+  
+  // For local assets, use the src directly as Vite will handle the path
+  const imageSrc = isLocalAsset ? src : src;
+  
+  // Only generate WebP and srcset for local assets
   const getWebPSrc = (imageSrc) => {
-    if (typeof imageSrc === 'string' && imageSrc.startsWith('/')) {
+    if (isLocalAsset) {
       return imageSrc.replace(/\.(jpg|jpeg|png)$/, '.webp');
     }
     return imageSrc;
   };
 
-  // Generate srcset for responsive images
   const generateSrcSet = (imageSrc) => {
-    if (typeof imageSrc !== 'string' || !imageSrc.startsWith('/')) {
+    if (!isLocalAsset) {
       return undefined;
     }
 
@@ -32,8 +37,8 @@ const OptimizedImage = ({
       .join(', ');
   };
 
-  const webpSrc = getWebPSrc(src);
-  const srcSet = generateSrcSet(src);
+  const webpSrc = getWebPSrc(imageSrc);
+  const srcSet = generateSrcSet(imageSrc);
   const webpSrcSet = generateSrcSet(webpSrc);
 
   return (
@@ -46,7 +51,7 @@ const OptimizedImage = ({
         />
       )}
       <img
-        src={src}
+        src={imageSrc}
         srcSet={srcSet}
         sizes={sizes}
         alt={alt}
@@ -61,7 +66,7 @@ const OptimizedImage = ({
 };
 
 OptimizedImage.propTypes = {
-  src: PropTypes.string.isRequired,
+  src: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
   alt: PropTypes.string.isRequired,
   className: PropTypes.string,
   width: PropTypes.number,
