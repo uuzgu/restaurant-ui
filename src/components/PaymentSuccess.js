@@ -114,7 +114,7 @@ const OrderDetailsPopup = ({ orderDetails, onClose }) => {
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+          className="absolute top-4 right-4 text-[var(--popup-text-tertiary)] hover:text-[var(--popup-text)] transition-colors"
           aria-label="Close order details"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -122,161 +122,106 @@ const OrderDetailsPopup = ({ orderDetails, onClose }) => {
           </svg>
         </button>
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Order Details</h2>
+          <h2 className="text-2xl font-bold text-[var(--popup-header-text)]">Order Details</h2>
         </div>
 
         <div className="mt-4 space-y-6">
           {/* Basic Order Info */}
-          <div className="border-b dark:border-gray-700 pb-6">
-            <h3 className="text-xl font-semibold mb-4">Basic Information</h3>
+          <div className="border-b border-[var(--popup-content-border)] pb-6">
+            <h3 className="text-xl font-semibold mb-4 text-[var(--popup-header-text)]">Basic Information</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="space-y-2">
-                <div className="text-gray-600 dark:text-gray-400">Order Number</div>
-                <div className="font-medium">{orderDetails.orderNumber || 'N/A'}</div>
+                <div className="text-[var(--popup-text-tertiary)]">Order Number</div>
+                <div className="font-medium text-[var(--popup-text)]">{orderDetails.orderNumber || 'N/A'}</div>
               </div>
               <div className="space-y-2">
-                <div className="text-gray-600 dark:text-gray-400">Status</div>
-                <div className="font-medium capitalize">{orderDetails.status || 'N/A'}</div>
+                <div className="text-[var(--popup-text-tertiary)]">Status</div>
+                <div className="font-medium text-[var(--popup-text)] capitalize">{orderDetails.status || 'N/A'}</div>
               </div>
               <div className="space-y-2">
-                <div className="text-gray-600 dark:text-gray-400">Payment Method</div>
-                <div className="font-medium capitalize">{orderDetails.paymentMethod || 'N/A'}</div>
+                <div className="text-[var(--popup-text-tertiary)]">Payment Method</div>
+                <div className="font-medium text-[var(--popup-text)] capitalize">{orderDetails.paymentMethod || 'N/A'}</div>
               </div>
               <div className="space-y-2">
-                <div className="text-gray-600 dark:text-gray-400">Total Amount</div>
-                <div className="font-medium">{formatPrice(orderDetails.total)}</div>
+                <div className="text-[var(--popup-text-tertiary)]">Total Amount</div>
+                <div className="font-medium text-[var(--popup-text)]">{formatPrice(orderDetails.total)}</div>
               </div>
               <div className="space-y-2">
-                <div className="text-gray-600 dark:text-gray-400">Order Method</div>
-                <div className="font-medium capitalize">{orderDetails.orderMethod || 'N/A'}</div>
+                <div className="text-[var(--popup-text-tertiary)]">Order Method</div>
+                <div className="font-medium text-[var(--popup-text)] capitalize">{orderDetails.orderMethod || 'N/A'}</div>
               </div>
               <div className="space-y-2">
-                <div className="text-gray-600 dark:text-gray-400">Created At</div>
-                <div className="font-medium">{formatDate(orderDetails.createdAt)}</div>
+                <div className="text-[var(--popup-text-tertiary)]">Created At</div>
+                <div className="font-medium text-[var(--popup-text)]">{formatDate(orderDetails.createdAt)}</div>
               </div>
             </div>
           </div>
 
           {/* Customer Info */}
-          <div className="border-b dark:border-gray-700 pb-6">
-            <h3 className="text-xl font-semibold mb-4">Customer Information</h3>
+          <div className="border-b border-[var(--popup-content-border)] pb-6">
+            <h3 className="text-xl font-semibold mb-4 text-[var(--popup-header-text)]">Customer Information</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="space-y-2">
-                <div className="text-gray-600 dark:text-gray-400">Name</div>
-                <div className="font-medium">
+                <div className="text-[var(--popup-text-tertiary)]">Name</div>
+                <div className="font-medium text-[var(--popup-text)]">
                   {orderDetails.customerInfo?.firstName || 'N/A'} {orderDetails.customerInfo?.lastName || ''}
                 </div>
               </div>
               <div className="space-y-2">
-                <div className="text-gray-600 dark:text-gray-400">Email</div>
-                <div className="font-medium">{orderDetails.customerInfo?.email || 'N/A'}</div>
+                <div className="text-[var(--popup-text-tertiary)]">Email</div>
+                <div className="font-medium text-[var(--popup-text)]">{orderDetails.customerInfo?.email || 'N/A'}</div>
               </div>
               <div className="space-y-2">
-                <div className="text-gray-600 dark:text-gray-400">Phone</div>
-                <div className="font-medium">{orderDetails.customerInfo?.phone || 'N/A'}</div>
+                <div className="text-[var(--popup-text-tertiary)]">Phone</div>
+                <div className="font-medium text-[var(--popup-text)]">{orderDetails.customerInfo?.phone || 'N/A'}</div>
               </div>
             </div>
           </div>
 
           {/* Delivery Address */}
           {orderDetails.customerInfo?.postalCode && (
-            <div className="border-b dark:border-gray-700 pb-6">
-              <h3 className="text-xl font-semibold mb-4">Delivery Address</h3>
+            <div className="border-b border-[var(--popup-content-border)] pb-6">
+              <h3 className="text-xl font-semibold mb-4 text-[var(--popup-header-text)]">Delivery Address</h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="space-y-2">
-                  <div className="text-gray-600 dark:text-gray-400">Street</div>
-                  <div className="font-medium">{orderDetails.customerInfo.street || 'N/A'}</div>
+                  <div className="text-[var(--popup-text-tertiary)]">Street</div>
+                  <div className="font-medium text-[var(--popup-text)]">{orderDetails.customerInfo.street || 'N/A'}</div>
                 </div>
                 <div className="space-y-2">
-                  <div className="text-gray-600 dark:text-gray-400">House</div>
-                  <div className="font-medium">{orderDetails.customerInfo.house || 'N/A'}</div>
+                  <div className="text-[var(--popup-text-tertiary)]">House</div>
+                  <div className="font-medium text-[var(--popup-text)]">{orderDetails.customerInfo.house || 'N/A'}</div>
                 </div>
                 <div className="space-y-2">
-                  <div className="text-gray-600 dark:text-gray-400">Postal Code</div>
-                  <div className="font-medium">{orderDetails.customerInfo.postalCode || 'N/A'}</div>
+                  <div className="text-[var(--popup-text-tertiary)]">Postal Code</div>
+                  <div className="font-medium text-[var(--popup-text)]">{orderDetails.customerInfo.postalCode || 'N/A'}</div>
                 </div>
                 {orderDetails.customerInfo.stairs && (
                   <div className="space-y-2">
-                    <div className="text-gray-600 dark:text-gray-400">Stairs</div>
-                    <div className="font-medium">{orderDetails.customerInfo.stairs}</div>
+                    <div className="text-[var(--popup-text-tertiary)]">Stairs</div>
+                    <div className="font-medium text-[var(--popup-text)]">{orderDetails.customerInfo.stairs}</div>
                   </div>
                 )}
                 {orderDetails.customerInfo.stick && (
                   <div className="space-y-2">
-                    <div className="text-gray-600 dark:text-gray-400">Stick</div>
-                    <div className="font-medium">{orderDetails.customerInfo.stick}</div>
+                    <div className="text-[var(--popup-text-tertiary)]">Stick</div>
+                    <div className="font-medium text-[var(--popup-text)]">{orderDetails.customerInfo.stick}</div>
                   </div>
                 )}
                 {orderDetails.customerInfo.door && (
                   <div className="space-y-2">
-                    <div className="text-gray-600 dark:text-gray-400">Door</div>
-                    <div className="font-medium">{orderDetails.customerInfo.door}</div>
-                  </div>
-                )}
-                {orderDetails.customerInfo.bell && (
-                  <div className="space-y-2">
-                    <div className="text-gray-600 dark:text-gray-400">Bell</div>
-                    <div className="font-medium">{orderDetails.customerInfo.bell}</div>
+                    <div className="text-[var(--popup-text-tertiary)]">Door</div>
+                    <div className="font-medium text-[var(--popup-text)]">{orderDetails.customerInfo.door}</div>
                   </div>
                 )}
               </div>
             </div>
           )}
 
-          {/* Order Items */}
-          <div>
-            <h4 className="font-semibold text-lg mb-2 text-[var(--popup-header-text)]">Order Items</h4>
-            <div className="space-y-4">
-              {orderDetails.items && orderDetails.items.length > 0 ? orderDetails.items.map((item, idx) => (
-                <div key={idx} className="border-b border-[var(--popup-content-border)] pb-3 mb-3 last:border-b-0 last:pb-0 last:mb-0">
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">{item.name} x{item.quantity}</span>
-                    <span className="font-semibold">€{(item.price * item.quantity).toFixed(2)}</span>
-                  </div>
-                  {/* New grouped options display */}
-                  {item.selectedItems && item.selectedItems.length > 0 && (() => {
-                    const groupMap = groupOptionsByGroupNameWithOrder(item.selectedItems);
-                    const renderedGroups = new Set();
-                    return [
-                      ...(item.groupOrder || []).filter(groupName => groupMap[groupName]).map(groupName => {
-                        renderedGroups.add(groupName);
-                        const group = groupMap[groupName];
-                        return (
-                          <div key={groupName} className="pl-2">
-                            <span className="font-semibold text-gray-600 dark:text-gray-300">{group.name}:</span>{' '}
-                            {group.options.map((opt, i, arr) => (
-                              <span key={i}>
-                                {opt.name}{opt.quantity > 1 ? ` x${opt.quantity}` : ''}{i < arr.length - 1 ? ', ' : ''}
-                              </span>
-                            ))}
-                          </div>
-                        );
-                      }),
-                      // Only render remaining groups if they're not in groupOrder
-                      ...Object.entries(groupMap)
-                        .filter(([groupName]) => !renderedGroups.has(groupName))
-                        .map(([groupName, group]) => (
-                          <div key={groupName} className="pl-2">
-                            <span className="font-semibold text-gray-600 dark:text-gray-300">{group.name}:</span>{' '}
-                            {group.options.map((opt, i, arr) => (
-                              <span key={i}>
-                                {opt.name}{opt.quantity > 1 ? ` x${opt.quantity}` : ''}{i < arr.length - 1 ? ', ' : ''}
-                              </span>
-                            ))}
-                          </div>
-                        ))
-                    ];
-                  })()}
-                </div>
-              )) : <div className="text-gray-500">No items found.</div>}
-            </div>
-          </div>
-
           {/* Special Notes */}
           {orderDetails.customerInfo?.specialNotes && (
-            <div className="border-t dark:border-gray-700 pt-6">
-              <h3 className="text-xl font-semibold mb-4">Special Notes</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="border-t border-[var(--popup-content-border)] pt-6">
+              <h3 className="text-xl font-semibold mb-4 text-[var(--popup-header-text)]">Special Notes</h3>
+              <p className="text-sm text-[var(--popup-text-tertiary)]">
                 {orderDetails.customerInfo.specialNotes}
               </p>
             </div>
@@ -455,42 +400,42 @@ const PaymentSuccess = () => {
   }
 
   return (
-    <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
+    <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-[var(--popup-text-septenary)]' : 'bg-[var(--popup-text-senary)]'}`}>
       <div className="w-full max-w-2xl mx-4 my-8">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+        <div className="bg-[var(--popup-container-bg)] rounded-lg shadow-lg p-8 border border-[var(--popup-container-border)]">
           <div className="text-center mb-8">
-            <div className="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-20 h-20 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-10 h-10 text-green-500 dark:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
               </svg>
             </div>
-            <h2 className="text-3xl font-bold mb-3">Payment Successful!</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400">Thank you for your order</p>
+            <h2 className="text-3xl font-bold mb-3 text-[var(--popup-header-text)]">Payment Successful!</h2>
+            <p className="text-lg text-[var(--popup-text-tertiary)]">Thank you for your order</p>
           </div>
 
-          <div className="border-t dark:border-gray-700 pt-6">
+          <div className="border-t border-[var(--popup-content-border)] pt-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold">Order Details</h3>
+              <h3 className="text-xl font-semibold text-[var(--popup-header-text)]">Order Details</h3>
               <button
                 onClick={() => setShowDetailsPopup(true)}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+                className="text-[var(--popup-text-tertiary)] hover:text-[var(--popup-text)] transition-colors"
                 title="View detailed order information"
               >
                 <InformationCircleIcon className="h-7 w-7" />
               </button>
             </div>
             <div className="space-y-3">
-              <div className="flex justify-between py-2 border-b dark:border-gray-700">
-                <span className="text-gray-600 dark:text-gray-400">Order Number:</span>
-                <span className="font-medium">{orderDetails.orderNumber || 'N/A'}</span>
+              <div className="flex justify-between py-2 border-b border-[var(--popup-content-border)]">
+                <span className="text-[var(--popup-text-tertiary)]">Order Number:</span>
+                <span className="font-medium text-[var(--popup-text)]">{orderDetails.orderNumber || 'N/A'}</span>
               </div>
-              <div className="flex justify-between py-2 border-b dark:border-gray-700">
-                <span className="text-gray-600 dark:text-gray-400">Total Amount:</span>
-                <span className="font-medium">{formatPrice(orderDetails.total)}</span>
+              <div className="flex justify-between py-2 border-b border-[var(--popup-content-border)]">
+                <span className="text-[var(--popup-text-tertiary)]">Total Amount:</span>
+                <span className="font-medium text-[var(--popup-text)]">{formatPrice(orderDetails.total)}</span>
               </div>
               <div className="flex justify-between py-2">
-                <span className="text-gray-600 dark:text-gray-400">Payment Method:</span>
-                <span className="font-medium capitalize">{orderDetails.paymentMethod || 'N/A'}</span>
+                <span className="text-[var(--popup-text-tertiary)]">Payment Method:</span>
+                <span className="font-medium text-[var(--popup-text)] capitalize">{orderDetails.paymentMethod || 'N/A'}</span>
               </div>
             </div>
           </div>
