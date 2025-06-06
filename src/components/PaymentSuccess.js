@@ -5,18 +5,6 @@ import { useDarkMode } from '../DarkModeContext';
 import { useLanguage } from '../LanguageContext';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import './PaymentSuccess.css';
-import axios from 'axios';
-import { useTranslation } from 'react-i18next';
-
-// Helper function to get base URL
-const getBaseUrl = () => {
-  // In development, use localhost
-  if (process.env.NODE_ENV === 'development') {
-    return 'http://localhost:5019';
-  }
-  // In production, use the current origin
-  return window.location.origin;
-};
 
 // Helper function to format price
 const formatPrice = (price) => {
@@ -213,6 +201,12 @@ const OrderDetailsPopup = ({ orderDetails, onClose }) => {
                     <div className="font-medium text-[var(--popup-text)]">{orderDetails.customerInfo.door}</div>
                   </div>
                 )}
+                {orderDetails.customerInfo.bell && (
+                  <div className="space-y-2">
+                    <div className="text-[var(--popup-text-tertiary)]">Bell</div>
+                    <div className="font-medium text-[var(--popup-text)]">{orderDetails.customerInfo.bell}</div>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -286,111 +280,28 @@ const OrderDetailsPopup = ({ orderDetails, onClose }) => {
 };
 
 const PaymentSuccess = () => {
-  const [orderDetails, setOrderDetails] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [showDetailsPopup, setShowDetailsPopup] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { isDarkMode } = useDarkMode();
   const { language, translations } = useLanguage();
-  const { t } = useTranslation();
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showOrderDetails, setShowOrderDetails] = useState(false);
 
   const fetchOrderDetails = async () => {
     try {
-      setLoading(true);
-      setError(null);
+      const urlParams = new URLSearchParams(window.location.search);
+      const sessionId = urlParams.get('session_id');
       
-      console.log('Payment Success Page - Full URL:', window.location.href);
-      console.log('Payment Success Page - Search Params:', location.search);
-      console.log('Payment Success Page - Location State:', location.state);
-      
-      // First check if we have order details in the navigation state
-      if (location.state?.orderDetails) {
-        console.log('Using order details from navigation state:', location.state.orderDetails);
-        // Use the order details directly from navigation state
-        const mappedOrderDetails = {
-          ...location.state.orderDetails,
-          // Payment information
-          paymentMethod: location.state.paymentMethod || 'cash',
-          status: location.state.orderDetails.status || 'pending',
-          orderNumber: location.state.orderDetails.orderNumber || location.state.orderDetails.id,
-          total: location.state.orderDetails.total,
-          
-          // Order method and timing
-          orderMethod: location.state.orderDetails.orderMethod,
-          createdAt: location.state.orderDetails.createdAt || new Date().toISOString(),
-          
-          // Customer information
-          customerInfo: location.state.customerInfo,
-          
-          // Order items - properly map items and their options
-          items: (location.state.orderDetails.items || []).map(item => ({
-            id: item.id,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            note: item.note,
-            selectedItems: (item.selectedItems || []).map(selected => ({
-              id: selected.id,
-              name: selected.name,
-              price: selected.price,
-              quantity: selected.quantity || 1,
-              groupName: selected.groupName,
-              type: selected.type
-            })),
-            groupOrder: item.groupOrder || []
-          }))
-        };
-        
-        console.log('Mapped order details from navigation state:', mappedOrderDetails);
-        setOrderDetails(mappedOrderDetails);
-        setLoading(false);
-        return;
+      if (sessionId) {
+        const result = await handlePaymentSuccess(sessionId);
+        setOrderDetails(result);
       }
-      
-      // Get payment method from localStorage
-      const paymentMethod = localStorage.getItem('paymentMethod') || 'stripe';
-      console.log('Payment Success Page - Payment Method:', paymentMethod);
-
-      // For cash payments, we should have an orderId
-      if (paymentMethod === 'cash') {
-        const orderId = localStorage.getItem('cashOrderId');
-        console.log('Payment Success Page - Cash Order ID:', orderId);
-        
-        if (!orderId) {
-          throw new Error('No order ID found for cash payment');
-        }
-
-        const orderDetails = await handlePaymentSuccess(orderId);
-        setOrderDetails(orderDetails);
-        setLoading(false);
-        return;
-      }
-
-      // For Stripe payments, continue with session ID logic
-      const urlParams = new URLSearchParams(location.search);
-      const sessionIdFromParams = urlParams.get('session_id');
-      console.log('Payment Success Page - Session ID from params:', sessionIdFromParams);
-      
-      const storedSessionId = localStorage.getItem('stripeSessionId');
-      console.log('Payment Success Page - Stored Session ID:', storedSessionId);
-      
-      const sessionIdToUse = sessionIdFromParams || storedSessionId;
-      console.log('Payment Success Page - Using Session ID:', sessionIdToUse);
-
-      if (!sessionIdToUse) {
-        throw new Error('No session ID found');
-      }
-
-      const orderDetails = await handlePaymentSuccess(sessionIdToUse);
-      setOrderDetails(orderDetails);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching order details:', error);
-      console.error('Error stack:', error.stack);
-      setError(error.message);
-      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching order details:', err);
+      setError('Failed to fetch order details');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -398,116 +309,51 @@ const PaymentSuccess = () => {
     fetchOrderDetails();
   }, []);
 
-  const getStatusText = (status, paymentMethod) => {
-    if (paymentMethod === 'cash') {
-      return translations[language].paymentSuccess?.cashPending || 'Order Pending - Pay at Pickup';
-    }
-    switch (status?.toLowerCase()) {
-      case 'completed':
-        return translations[language].paymentSuccess?.completed || 'Payment Completed';
-      case 'processing':
-        return translations[language].paymentSuccess?.processing || 'Payment Processing';
-      case 'pending':
-        return translations[language].paymentSuccess?.pending || 'Payment Pending';
-      default:
-        return translations[language].paymentSuccess?.unknown || 'Unknown Status';
-    }
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-        <div className="w-full max-w-2xl mx-4 my-8">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-        <div className="w-full max-w-2xl mx-4 my-8">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
-            <p className="text-gray-600 dark:text-gray-400">{error}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!orderDetails) {
-    return (
-      <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'}`}>
-        <div className="w-full max-w-2xl mx-4 my-8">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
-            <p className="text-gray-600 dark:text-gray-400">No order details available</p>
-          </div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading order details...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen flex items-center justify-center ${isDarkMode ? 'bg-[var(--popup-text-septenary)]' : 'bg-[var(--popup-text-senary)]'}`}>
-      <div className="w-full max-w-2xl mx-4 my-8">
-        <div className="bg-[var(--popup-container-bg)] rounded-lg shadow-lg p-8 border border-[var(--popup-container-border)]">
-          <div className="text-center mb-8">
-            <div className="w-20 h-20 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-10 h-10 text-green-500 dark:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-            </div>
-            <h2 className="text-3xl font-bold mb-3 text-[var(--popup-header-text)]">Payment Successful!</h2>
-            <p className="text-lg text-[var(--popup-text-tertiary)]">Thank you for your order</p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+        <div className="text-center">
+          <div className="text-green-500 text-6xl mb-4">
+            <i className="fas fa-check-circle"></i>
           </div>
-
-          <div className="border-t border-[var(--popup-content-border)] pt-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-[var(--popup-header-text)]">Order Details</h3>
-              <button
-                onClick={() => setShowDetailsPopup(true)}
-                className="text-[var(--popup-text-tertiary)] hover:text-[var(--popup-text)] transition-colors"
-                title="View detailed order information"
-              >
-                <InformationCircleIcon className="h-7 w-7" />
-              </button>
-            </div>
-            <div className="space-y-3">
-              <div className="flex justify-between py-2 border-b border-[var(--popup-content-border)]">
-                <span className="text-[var(--popup-text-tertiary)]">Order Number:</span>
-                <span className="font-medium text-[var(--popup-text)]">{orderDetails.orderNumber || 'N/A'}</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-[var(--popup-content-border)]">
-                <span className="text-[var(--popup-text-tertiary)]">Total Amount:</span>
-                <span className="font-medium text-[var(--popup-text)]">{formatPrice(orderDetails.total)}</span>
-              </div>
-              <div className="flex justify-between py-2">
-                <span className="text-[var(--popup-text-tertiary)]">Payment Method:</span>
-                <span className="font-medium text-[var(--popup-text)] capitalize">{orderDetails.paymentMethod || 'N/A'}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 text-center">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Payment Successful</h2>
+          <p className="text-gray-600 mb-6">
+            Thank you for your order! Your payment has been processed successfully.
+          </p>
+          {error && (
+            <p className="text-red-500 mb-4">{error}</p>
+          )}
+          <div className="space-y-4">
+            <button
+              onClick={() => setShowOrderDetails(true)}
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
+            >
+              View Order Details
+            </button>
             <button
               onClick={() => navigate('/')}
-              className="bg-red-500 text-white px-8 py-3 rounded-lg hover:bg-red-600 transition-colors text-lg font-medium"
+              className="w-full bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300 transition duration-200"
             >
               Return to Home
             </button>
           </div>
         </div>
       </div>
-
-      {showDetailsPopup && orderDetails && (
+      {showOrderDetails && (
         <OrderDetailsPopup
           orderDetails={orderDetails}
-          onClose={() => setShowDetailsPopup(false)}
+          onClose={() => setShowOrderDetails(false)}
         />
       )}
     </div>

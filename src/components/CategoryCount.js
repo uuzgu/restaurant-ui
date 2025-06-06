@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
-import { useDarkMode } from "../DarkModeContext";
 import './CategoryCount.css';
 
 // Import images directly
@@ -17,11 +16,7 @@ const CategoryCount = ({ categories, activeCategory, setActiveCategory, scrollTo
   const categoryListRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-  const { darkMode } = useDarkMode();
   const [imageErrors, setImageErrors] = useState({});
-
-  // Suppress observer right after click
-  const [suppressObserver, setSuppressObserver] = useState(false);
 
   // Debug: Log activeCategory whenever it changes
   React.useEffect(() => {
@@ -88,10 +83,8 @@ const CategoryCount = ({ categories, activeCategory, setActiveCategory, scrollTo
 
   // Handle click: suppress observer, set active, scroll, then re-enable observer
   const handleCategoryClick = (categoryId) => {
-    setSuppressObserver(true);
     setActiveCategory(categoryId);
     scrollToSection(categoryId);
-    setTimeout(() => setSuppressObserver(false), 600); // adjust as needed
   };
 
   const handleImageError = (categoryId) => {

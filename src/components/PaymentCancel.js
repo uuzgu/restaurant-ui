@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { handlePaymentCancel, getStoredCheckoutData, clearStoredCheckoutData } from '../controllers/paymentController';
+import { handlePaymentCancel, getStoredCheckoutData } from '../controllers/paymentController';
 
 const PaymentCancel = () => {
   const navigate = useNavigate();

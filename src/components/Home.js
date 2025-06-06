@@ -6,7 +6,7 @@ import homeImage3 from '../assets/pizzahomeOutside.png';
 import homeHours from '../assets/homeHours.png';
 import { ChevronLeft, ChevronRight, Clock, Phone, MapPin } from 'lucide-react';
 import { useDarkMode } from '../DarkModeContext';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import '../colors/homeColors.css';
 
 const HomePage = () => {
@@ -37,7 +37,7 @@ const HomePage = () => {
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [currentIndex]);
+  }, [currentIndex, goToNext]);
 
   const handleOrderNowClick = () => {
     setShowOrderOptions(true);

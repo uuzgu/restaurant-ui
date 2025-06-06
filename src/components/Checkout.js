@@ -9,7 +9,6 @@ import "../colors/checkoutColors.css";
 import { createCheckoutSession, getMinimumOrderValue, storeCheckoutData, clearAllStoredData } from "../controllers/paymentController";
 import { OrderProvider } from "../contexts/OrderContext";
 import { ApiProvider } from "../contexts/ApiContext";
-import { useDarkMode } from "../DarkModeContext";
 
 const CouponScheduleInfo = ({ schedule }) => {
   if (!schedule) return null;
@@ -49,7 +48,6 @@ const Checkout = ({ basket: propBasket, setBasket: propSetBasket, orderMethod: p
   const navigate = useNavigate();
   const location = useLocation();
   const { language, translations } = useLanguage();
-  const { darkMode } = useDarkMode();
   
   // Get basket and orderMethod from props, location state, or stored checkout data
   const getInitialData = () => {
@@ -250,7 +248,7 @@ const Checkout = ({ basket: propBasket, setBasket: propSetBasket, orderMethod: p
         setBasket(resetBasket);
       }
     }
-  }, [localBasket, location.state?.basketModified, previousBasketState]);
+  }, [localBasket, appliedCoupon, previousBasketState, location.state?.basketModified, setBasket]);
 
   // Store previous basket state for comparison
   useEffect(() => {
@@ -549,7 +547,6 @@ const Checkout = ({ basket: propBasket, setBasket: propSetBasket, orderMethod: p
 
   const OrderSummaryItem = ({ item }) => {
     const [showDetails, setShowDetails] = useState(false);
-    const { darkMode } = useDarkMode();
 
     const toggleDetails = (e) => {
       e.preventDefault();

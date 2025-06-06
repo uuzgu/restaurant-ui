@@ -190,7 +190,7 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
     }
   };
 
-  const detectActiveCategory = () => {
+  const detectActiveCategory = useCallback(() => {
     const sections = Object.keys(categoryLabels).map((categoryId) =>
       document.getElementById(`category-${categoryId}`)
     );
@@ -200,39 +200,26 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
     for (let section of sections) {
       if (section) {
         const rect = section.getBoundingClientRect();
-        const offset = Math.abs(rect.top - 100); // Adjusted offset
-        if (offset < closestOffset && rect.top >= -100) { // Added threshold
+        const offset = Math.abs(rect.top);
+        if (offset < closestOffset) {
           closestOffset = offset;
-          closestSection = section.id.replace('category-', '');
+          closestSection = section;
         }
       }
     }
 
-    if (closestSection && closestSection !== activeCategory) {
-      setActiveCategory(closestSection);
+    if (closestSection) {
+      const categoryId = closestSection.id.split('-')[1];
+      setActiveCategory(categoryId);
     }
-  };
+  }, [categoryLabels]);
 
-  // Add debounce to scroll event
   useEffect(() => {
-    let timeoutId;
-    const handleScroll = () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-      timeoutId = setTimeout(() => {
-        detectActiveCategory();
-      }, 100);
-    };
-
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", detectActiveCategory);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
+      window.removeEventListener("scroll", detectActiveCategory);
     };
-  }, []);
+  }, [detectActiveCategory]);
 
   // Update the showItemIngredients function to properly process selection groups
   const showItemIngredients = useCallback(async (item) => {

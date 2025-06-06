@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { TrashIcon, CheckIcon, FaceFrownIcon } from "@heroicons/react/24/solid";
+import { FaceFrownIcon } from "@heroicons/react/24/solid";
 import emptyBasket from '../assets/emptyBasket.png';
 import { useDarkMode } from "../DarkModeContext";
 import '../Basket.css';
@@ -28,22 +28,10 @@ const FRIENDLY_TYPE_LABELS = {
   exclusion: 'Removed',
   Other: 'Other'
 };
-const GROUP_ORDER = ['Size', 'Crust', 'Toppings', 'Sauces', 'Removed', 'Other'];
 
 function getFriendlyLabel(typeOrName) {
   // If it's a known type, return the friendly label, else just capitalize
   return FRIENDLY_TYPE_LABELS[typeOrName?.toLowerCase()] || (typeOrName?.charAt(0).toUpperCase() + typeOrName?.slice(1)) || '';
-}
-
-function groupOptionsByGroupName(selectedItems) {
-  if (!selectedItems) return {};
-  const groups = {};
-  selectedItems.forEach(option => {
-    const group = option.groupName || getFriendlyLabel(option.type) || 'Other';
-    if (!groups[group]) groups[group] = [];
-    groups[group].push(option);
-  });
-  return groups;
 }
 
 function groupOptionsByGroupNameWithOrder(selectedItems) {
@@ -65,7 +53,6 @@ function groupOptionsByGroupNameWithOrder(selectedItems) {
 }
 
 const BasketItem = ({ item, onRemove, increaseQuantity, decreaseQuantity, index }) => {
-  const { darkMode } = useDarkMode();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
 
@@ -241,7 +228,6 @@ const Basket = ({
   toggleBasket
 }) => {
   const navigate = useNavigate();
-  const { darkMode } = useDarkMode();
   const [showCouponWarning, setShowCouponWarning] = useState(false);
   const location = useLocation();
   const [previousBasketState, setPreviousBasketState] = useState(null);

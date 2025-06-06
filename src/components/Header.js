@@ -3,7 +3,6 @@ import { useLanguage } from "../LanguageContext";
 import pizzaLogo from "../assets/pizzaLogoTr.png";
 import pizzaLogoDark from "../assets/pizzalogodark.png"; 
 import { Instagram, Twitter, Moon, Sun, ShoppingCart } from 'lucide-react';
-import { useState, useEffect } from "react";
 import { useDarkMode } from '../DarkModeContext';
 import '../colors/headerColors.css';
 
