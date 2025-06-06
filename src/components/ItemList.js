@@ -690,15 +690,29 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
       return;
     }
 
-    // Get all selected items from selection groups
+    // Get all selected items from selection groups, attaching groupName
     const selectedItems = [
       // Include items from selection groups
       ...itemOptions.selectionGroups.reduce((acc, group) => {
-        const selectedOptions = group.options.filter(opt => opt.selected);
+        const selectedOptions = group.options.filter(opt => opt.selected).map(opt => ({
+          ...opt,
+          groupName: group.name
+        }));
         return [...acc, ...selectedOptions];
       }, []),
-      // Include items from selectedIngredients
-      ...selectedIngredients
+      // Include items from selectedIngredients, attach groupName if possible
+      ...selectedIngredients.map(ing => {
+        // Try to find the group for this ingredient
+        let groupName = undefined;
+        if (ing.groupId && itemOptions.selectionGroups) {
+          const group = itemOptions.selectionGroups.find(g => g.id === ing.groupId);
+          if (group) groupName = group.name;
+        }
+        return {
+          ...ing,
+          groupName: groupName || ing.groupName // fallback to existing groupName if present
+        };
+      })
     ];
 
     const quantity = Number(popupItemQuantity || 1);
@@ -728,7 +742,8 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
         id: item.id,
         type: item.type,
         quantity: item.quantity
-      })))
+      }))),
+      groupOrder: itemOptions.selectionGroups.map(g => g.name)
     };
 
     // Check if the item already exists in the basket with the same selections and note
@@ -989,23 +1004,25 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
       <div className="content-container">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-[var(--category-header-bg)] fixed top-20 sm:top-24 left-0 w-full z-40 py-2 shadow-[var(--category-header-shadow)]">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-              <div className="flex items-center w-full max-w-[700px] space-x-4 overflow-x-auto">
-                <CategoryCount
-                  categories={categoryLabelsWithCount}
-                  activeCategory={activeCategory}
-                  setActiveCategory={setActiveCategory}
-                  scrollToSection={scrollToSection}
-                />
-              </div>
-              <div className="relative w-[200px] sm:w-[250px] md:w-[300px] flex items-center">
-                <input
-                  type="text"
-                  placeholder={` 🔍 ${translations[language].searchMenu}`}
-                  className="search-input border-[var(--search-border)] px-4 py-2 text-sm rounded-full shadow-sm focus:ring focus:ring-red-100 focus:outline-none w-full placeholder-[var(--search-placeholder)] bg-[var(--search-bg)] text-[var(--search-text)]"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div className="flex items-center w-full lg:max-w-[700px] space-x-4 overflow-x-auto scrollbar-hide">
+                  <CategoryCount
+                    categories={categoryLabelsWithCount}
+                    activeCategory={activeCategory}
+                    setActiveCategory={setActiveCategory}
+                    scrollToSection={scrollToSection}
+                  />
+                </div>
+                <div className="relative w-full lg:w-[200px] xl:w-[250px] 2xl:w-[300px] flex items-center">
+                  <input
+                    type="text"
+                    placeholder={` 🔍 ${translations[language].searchMenu}`}
+                    className="search-input border-[var(--search-border)] px-4 py-2 text-sm rounded-full shadow-sm focus:ring focus:ring-red-100 focus:outline-none w-full placeholder-[var(--search-placeholder)] bg-[var(--search-bg)] text-[var(--search-text)]"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
               </div>
             </div>
           </div>

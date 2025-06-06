@@ -1,12 +1,21 @@
 import React, { useRef, useEffect, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import { useDarkMode } from "../DarkModeContext";
+import './CategoryCount.css';
 
 const CategoryCount = ({ categories, activeCategory, setActiveCategory, scrollToSection }) => {
   const categoryListRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const { darkMode } = useDarkMode();
+
+  // Suppress observer right after click
+  const [suppressObserver, setSuppressObserver] = useState(false);
+
+  // Debug: Log activeCategory whenever it changes
+  React.useEffect(() => {
+    console.log('Active category:', activeCategory);
+  }, [activeCategory]);
 
   // Default category image mapping for fallback
   const defaultCategoryImages = {
@@ -46,38 +55,6 @@ const CategoryCount = ({ categories, activeCategory, setActiveCategory, scrollTo
     }
   }, [categories]);
 
-  useEffect(() => {
-    // Create an Intersection Observer
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const categoryId = parseInt(entry.target.id);
-            setActiveCategory(categoryId);
-          }
-        });
-      },
-      {
-        root: null,
-        rootMargin: "-50% 0px", // Trigger when section is in the middle of the viewport
-        threshold: 0.5
-      }
-    );
-
-    // Observe all category sections
-    categories.forEach((category) => {
-      const element = document.getElementById(category.categoryId.toString());
-      if (element) {
-        observer.observe(element);
-      }
-    });
-
-    return () => {
-      // Cleanup observer
-      observer.disconnect();
-    };
-  }, [categories, setActiveCategory]);
-
   const updateScrollButtons = () => {
     if (categoryListRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = categoryListRef.current;
@@ -96,6 +73,14 @@ const CategoryCount = ({ categories, activeCategory, setActiveCategory, scrollTo
 
       setTimeout(updateScrollButtons, 300);
     }
+  };
+
+  // Handle click: suppress observer, set active, scroll, then re-enable observer
+  const handleCategoryClick = (categoryId) => {
+    setSuppressObserver(true);
+    setActiveCategory(categoryId);
+    scrollToSection(categoryId);
+    setTimeout(() => setSuppressObserver(false), 600); // adjust as needed
   };
 
   if (!categories || categories.length === 0) {
@@ -124,17 +109,15 @@ const CategoryCount = ({ categories, activeCategory, setActiveCategory, scrollTo
         {sortedCategories.map((category) => (
           <button
             key={category.categoryId}
-            onClick={() => {
-              setActiveCategory(category.categoryId);
-              scrollToSection(category.categoryId);
-            }}
-            className={`h-full px-4 py-2 text-base font-sans flex flex-col items-center justify-center transition-all duration-200 ease-in-out relative overflow-visible rounded-full focus:outline-none focus:ring-2 focus:ring-red-400 min-w-max bg-[var(--category-header-bg)] shadow-sm
+            onClick={() => handleCategoryClick(category.categoryId)}
+            className={`h-full px-4 py-2 text-base font-sans flex flex-col items-center justify-center transition-all duration-200 ease-in-out relative overflow-visible min-w-max border-none outline-none bg-transparent
               ${
                 activeCategory === category.categoryId
-                  ? "text-[var(--category-header-active)] bg-[var(--category-header-bg)]"
+                  ? "text-[var(--category-header-active)]"
                   : "text-[var(--category-header-text)] hover:text-[var(--category-header-active)]"
               }`}
             style={{ touchAction: 'manipulation', marginBottom: 0 }}
+            tabIndex={0}
           >
             <span className="mb-1 text-sm sm:text-base w-full block whitespace-normal font-semibold text-center" title={`${category.category} (${category.itemCount})`}>
               {category.category} ({category.itemCount})
@@ -148,6 +131,9 @@ const CategoryCount = ({ categories, activeCategory, setActiveCategory, scrollTo
                 e.target.style.display = 'none';
               }}
             />
+            {activeCategory === category.categoryId && (
+              <span className="category-underline"></span>
+            )}
           </button>
         ))}
       </div>

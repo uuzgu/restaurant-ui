@@ -7,6 +7,63 @@ import '../colors/basketColors.css';
 import { useState, useEffect, useRef } from "react";
 import '../colors/orderColors.css';
 
+// Helper to group selected items by type
+const groupOptionsByType = (selectedItems) => {
+  if (!selectedItems) return {};
+  const groups = {};
+  selectedItems.forEach(option => {
+    const type = option.type || 'Other';
+    if (!groups[type]) groups[type] = [];
+    groups[type].push(option);
+  });
+  return groups;
+};
+
+// Friendly labels and order for option types
+const FRIENDLY_TYPE_LABELS = {
+  size: 'Size',
+  crust: 'Crust',
+  sauce: 'Sauces',
+  selection: 'Toppings',
+  exclusion: 'Removed',
+  Other: 'Other'
+};
+const GROUP_ORDER = ['Size', 'Crust', 'Toppings', 'Sauces', 'Removed', 'Other'];
+
+function getFriendlyLabel(typeOrName) {
+  // If it's a known type, return the friendly label, else just capitalize
+  return FRIENDLY_TYPE_LABELS[typeOrName?.toLowerCase()] || (typeOrName?.charAt(0).toUpperCase() + typeOrName?.slice(1)) || '';
+}
+
+function groupOptionsByGroupName(selectedItems) {
+  if (!selectedItems) return {};
+  const groups = {};
+  selectedItems.forEach(option => {
+    const group = option.groupName || getFriendlyLabel(option.type) || 'Other';
+    if (!groups[group]) groups[group] = [];
+    groups[group].push(option);
+  });
+  return groups;
+}
+
+function groupOptionsByGroupNameWithOrder(selectedItems) {
+  if (!selectedItems) return [];
+  // Collect unique groupNames with their displayOrder (if present)
+  const groupMap = {};
+  selectedItems.forEach(option => {
+    const groupName = option.groupName || 'Other';
+    if (!groupMap[groupName]) {
+      groupMap[groupName] = {
+        name: groupName,
+        displayOrder: option.groupDisplayOrder ?? option.displayOrder ?? 9999, // fallback if not present
+        options: []
+      };
+    }
+    groupMap[groupName].options.push(option);
+  });
+  return groupMap;
+}
+
 const BasketItem = ({ item, onRemove, increaseQuantity, decreaseQuantity, index }) => {
   const { darkMode } = useDarkMode();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -102,10 +159,57 @@ const BasketItem = ({ item, onRemove, increaseQuantity, decreaseQuantity, index 
         <div className="mt-2 p-3 bg-[var(--basket-container-bg)] rounded-lg">
           {item.selectedItems && item.selectedItems.length > 0 && (
             <div className="mb-2">
-              <span className="text-sm font-medium text-[var(--basket-item-text)]">Selected Items:</span>
-              <p className="mt-1 text-sm text-[var(--basket-item-text)]">
-                {item.selectedItems.map(selected => selected.name).join(', ')}
-              </p>
+              <span className="text-sm font-medium text-[var(--basket-item-text)]">Selected Options:</span>
+              <div className="mt-1 space-y-1">
+                {/* Display groups in the order of item.groupOrder, then any remaining groups */}
+                {item.groupOrder && item.groupOrder.length > 0 && (() => {
+                  const groupMap = groupOptionsByGroupNameWithOrder(item.selectedItems);
+                  const renderedGroups = new Set();
+                  return [
+                    ...item.groupOrder.filter(groupName => groupMap[groupName]).map(groupName => {
+                      renderedGroups.add(groupName);
+                      const group = groupMap[groupName];
+                      return (
+                        <div key={groupName} className="pl-2">
+                          <span className="font-semibold text-[var(--basket-item-text)]">{group.name}:</span>{' '}
+                          {group.options.map((opt, i, arr) => (
+                            <span key={i}>
+                              {opt.name}{opt.quantity > 1 ? ` x${opt.quantity}` : ''}{i < arr.length - 1 ? ', ' : ''}
+                            </span>
+                          ))}
+                        </div>
+                      );
+                    }),
+                    // Render any remaining groups not in groupOrder
+                    ...Object.entries(groupMap)
+                      .filter(([groupName]) => !renderedGroups.has(groupName))
+                      .map(([groupName, group]) => (
+                        <div key={groupName} className="pl-2">
+                          <span className="font-semibold text-[var(--basket-item-text)]">{group.name}:</span>{' '}
+                          {group.options.map((opt, i, arr) => (
+                            <span key={i}>
+                              {opt.name}{opt.quantity > 1 ? ` x${opt.quantity}` : ''}{i < arr.length - 1 ? ', ' : ''}
+                            </span>
+                          ))}
+                        </div>
+                      ))
+                  ];
+                })()}
+                {/* Fallback if no groupOrder: show all groups sorted by displayOrder then name */}
+                {(!item.groupOrder || item.groupOrder.length === 0) && Object.values(groupOptionsByGroupNameWithOrder(item.selectedItems)).sort((a, b) => {
+                  if (a.displayOrder !== b.displayOrder) return a.displayOrder - b.displayOrder;
+                  return a.name.localeCompare(b.name);
+                }).map(group => (
+                  <div key={group.name} className="pl-2">
+                    <span className="font-semibold text-[var(--basket-item-text)]">{group.name}:</span>{' '}
+                    {group.options.map((opt, i, arr) => (
+                      <span key={i}>
+                        {opt.name}{opt.quantity > 1 ? ` x${opt.quantity}` : ''}{i < arr.length - 1 ? ', ' : ''}
+                      </span>
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
           {item.note && (

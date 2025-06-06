@@ -6,7 +6,7 @@ import PostalCodeSelector from "./PostalCodeSelector";
 import { ArrowLeft } from 'lucide-react';
 import "../Checkout.css";
 import "../colors/checkoutColors.css";
-import { createCheckoutSession, getMinimumOrderValue } from "../controllers/paymentController";
+import { createCheckoutSession, getMinimumOrderValue, storeCheckoutData, clearAllStoredData } from "../controllers/paymentController";
 import { OrderProvider } from "../contexts/OrderContext";
 import { ApiProvider } from "../contexts/ApiContext";
 import { useDarkMode } from "../DarkModeContext";
@@ -27,21 +27,91 @@ const CouponScheduleInfo = ({ schedule }) => {
   );
 };
 
+// Group options by groupName and use item.groupOrder for display order (copied from Basket.js)
+function groupOptionsByGroupNameWithOrder(selectedItems) {
+  if (!selectedItems) return {};
+  const groupMap = {};
+  selectedItems.forEach(option => {
+    const groupName = option.groupName || 'Other';
+    if (!groupMap[groupName]) {
+      groupMap[groupName] = {
+        name: groupName,
+        displayOrder: option.groupDisplayOrder ?? option.displayOrder ?? 9999,
+        options: []
+      };
+    }
+    groupMap[groupName].options.push(option);
+  });
+  return groupMap;
+}
+
 const Checkout = ({ basket: propBasket, setBasket: propSetBasket, orderMethod: propOrderMethod, onOrderMethodChange: propOnOrderMethodChange }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { language, translations } = useLanguage();
   const { darkMode } = useDarkMode();
+  
+  // Get basket and orderMethod from props, location state, or stored checkout data
+  const getInitialData = () => {
+    // First check location state (for retry or from order page)
+    if (location.state?.basket) {
+      return {
+        basket: location.state.basket,
+        orderMethod: location.state.orderMethod || 'delivery',
+        customerInfo: location.state.customerInfo || {}
+      };
+    }
+    
+    // Then check props
+    if (propBasket) {
+      return {
+        basket: propBasket,
+        orderMethod: propOrderMethod || 'delivery',
+        customerInfo: {}
+      };
+    }
+    
+    // Finally check localStorage
+    const storedData = localStorage.getItem('checkoutData');
+    if (storedData) {
+      try {
+        const data = JSON.parse(storedData);
+        return {
+          basket: data.items || [],
+          orderMethod: data.orderMethod || 'delivery',
+          customerInfo: data.customerInfo || {}
+        };
+      } catch (e) {
+        console.error('Error parsing stored checkout data:', e);
+      }
+    }
+    
+    // Default values
+    return {
+      basket: [],
+      orderMethod: 'delivery',
+      customerInfo: {}
+    };
+  };
+
+  const initialData = getInitialData();
+  
+  // Initialize state with the data
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    address: "",
+    firstName: initialData.customerInfo.firstName || "",
+    lastName: initialData.customerInfo.lastName || "",
+    email: initialData.customerInfo.email || "",
+    phone: initialData.customerInfo.phone || "",
+    address: initialData.customerInfo.street || "",
     city: "",
-    postalCode: "",
+    postalCode: initialData.customerInfo.postalCode || "",
     country: "",
-    orderNotes: "",
+    orderNotes: initialData.customerInfo.specialNotes || "",
+    house: initialData.customerInfo.house || "",
+    stairs: initialData.customerInfo.stairs || "",
+    stick: initialData.customerInfo.stick || "",
+    door: initialData.customerInfo.door || "",
+    bell: initialData.customerInfo.bell || ""
   });
   const [couponCode, setCouponCode] = useState("");
   const [couponError, setCouponError] = useState("");
@@ -52,7 +122,7 @@ const Checkout = ({ basket: propBasket, setBasket: propSetBasket, orderMethod: p
   const [showCouponRemovedMessage, setShowCouponRemovedMessage] = useState(false);
   const [previousBasketState, setPreviousBasketState] = useState(null);
   const [appliedCoupon, setAppliedCoupon] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState("stripe");
+  const [paymentMethod, setPaymentMethod] = useState(initialData.customerInfo.paymentMethod || "stripe");
   const [isProcessing, setIsProcessing] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [minimumOrderValue, setMinimumOrderValue] = useState(0);
@@ -68,13 +138,9 @@ const Checkout = ({ basket: propBasket, setBasket: propSetBasket, orderMethod: p
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
   const [showCouponSuccess, setShowCouponSuccess] = useState(false);
 
-  // Get basket and orderMethod from props or location state
-  const initialBasket = propBasket || (location.state?.basket || []);
-  const initialOrderMethod = propOrderMethod || (location.state?.orderMethod || 'delivery');
-
   // Initialize local state
-  const [localBasket, setLocalBasket] = useState(initialBasket);
-  const [localOrderMethod, setLocalOrderMethod] = useState(initialOrderMethod);
+  const [localBasket, setLocalBasket] = useState(initialData.basket);
+  const [localOrderMethod, setLocalOrderMethod] = useState(initialData.orderMethod);
 
   // Check if there's an applied coupon in the basket
   useEffect(() => {
@@ -95,19 +161,19 @@ const Checkout = ({ basket: propBasket, setBasket: propSetBasket, orderMethod: p
     if (propOnOrderMethodChange) propOnOrderMethodChange(newMethod);
   };
 
-  // Update local basket when prop basket changes
+  // Update local basket when location state changes
   useEffect(() => {
-    if (propBasket) {
-      setLocalBasket(propBasket);
+    if (location.state?.basket) {
+      setLocalBasket(location.state.basket);
     }
-  }, [propBasket]);
+  }, [location.state?.basket]);
 
-  // Update local order method when prop order method changes
+  // Update local order method when location state changes
   useEffect(() => {
-    if (propOrderMethod) {
-      setLocalOrderMethod(propOrderMethod);
+    if (location.state?.orderMethod) {
+      setLocalOrderMethod(location.state.orderMethod);
     }
-  }, [propOrderMethod]);
+  }, [location.state?.orderMethod]);
 
   // Update basket in localStorage when it changes
   useEffect(() => {
@@ -135,6 +201,13 @@ const Checkout = ({ basket: propBasket, setBasket: propSetBasket, orderMethod: p
     };
     fetchMinimumOrderValue();
   }, [formData.postalCode]);
+
+  // Clear stored data when starting a new order
+  useEffect(() => {
+    if (!location.state?.basket && !propBasket) {
+      clearAllStoredData();
+    }
+  }, [location.state?.basket, propBasket]);
 
   const handleBackToOrder = () => {
     // Only show warning if there was an applied coupon
@@ -311,51 +384,36 @@ const Checkout = ({ basket: propBasket, setBasket: propSetBasket, orderMethod: p
         })
       };
 
-      // Store checkout data in localStorage
-      const checkoutData = {
-        customerInfo,
-        orderMethod: localOrderMethod,
-        paymentMethod,
-        items: localBasket
-      };
-      localStorage.setItem('checkoutData', JSON.stringify(checkoutData));
-
-      // Log coupon usage if a coupon was applied
-      if (appliedCoupon) {
-        try {
-          const response = await fetch('http://localhost:5019/api/coupons/use', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              code: appliedCoupon.code,
-              email: formData.email,
-              orderTotal: calculateBasketTotal(),
-              orderItems: localBasket.map(item => ({
-                id: item.id,
-                name: item.name,
-                quantity: item.quantity,
-                originalPrice: item.originalPrice,
-                discountedPrice: item.discountedPrice
-              }))
-            }),
-          });
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            console.error('Failed to log coupon usage:', errorData);
-            // Still proceed with the order even if logging fails
-          }
-        } catch (error) {
-          console.error('Error logging coupon usage:', error);
-          // Don't block the order if coupon logging fails
-        }
-      }
+      // Calculate total amount
+      const totalAmount = localBasket.reduce((sum, item) => {
+        const price = item.discountedPrice !== undefined ? item.discountedPrice : item.originalPrice;
+        return sum + (price * item.quantity);
+      }, 0);
 
       // Process the order based on payment method
+      const mappedItems = localBasket.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.discountedPrice !== undefined ? item.discountedPrice : item.originalPrice,
+        quantity: item.quantity,
+        note: item.note || "",
+        selectedItems: (item.selectedItems || []).map(opt => ({
+          id: opt.id,
+          name: opt.name,
+          groupName: opt.groupName,
+          type: opt.type,
+          price: opt.price,
+          quantity: opt.quantity,
+        })),
+        groupOrder: item.groupOrder || [],
+        image: item.image || "",
+      }));
+
+      console.log('localBasket at checkout:', localBasket);
+      console.log('mappedItems to send:', mappedItems);
+
       const result = await createCheckoutSession({
-        items: localBasket,
+        items: mappedItems,
         customerInfo,
         orderMethod: localOrderMethod,
         paymentMethod
@@ -477,6 +535,18 @@ const Checkout = ({ basket: propBasket, setBasket: propSetBasket, orderMethod: p
     }));
   };
 
+  // Helper to group selected items by type
+  const groupOptionsByType = (selectedItems) => {
+    if (!selectedItems) return {};
+    const groups = {};
+    selectedItems.forEach(option => {
+      const type = option.type || 'Other';
+      if (!groups[type]) groups[type] = [];
+      groups[type].push(option);
+    });
+    return groups;
+  };
+
   const OrderSummaryItem = ({ item }) => {
     const [showDetails, setShowDetails] = useState(false);
     const { darkMode } = useDarkMode();
@@ -509,12 +579,55 @@ const Checkout = ({ basket: propBasket, setBasket: propSetBasket, orderMethod: p
             <div className="mt-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
               {item.selectedItems && item.selectedItems.length > 0 && (
                 <div className="mb-2">
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Selected Items:</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Selected Options:</span>
                   <div className="mt-1 space-y-1">
-                    {item.selectedItems.map((selected, index) => (
-                      <p key={index} className="text-sm text-gray-500 dark:text-gray-400">
-                        {selected.quantity > 1 ? `${selected.quantity}x ` : ''}{selected.name}
-                      </p>
+                    {/* Display groups in the order of item.groupOrder, then any remaining groups */}
+                    {item.groupOrder && item.groupOrder.length > 0 && (() => {
+                      const groupMap = groupOptionsByGroupNameWithOrder(item.selectedItems);
+                      const renderedGroups = new Set();
+                      return [
+                        ...item.groupOrder.filter(groupName => groupMap[groupName]).map(groupName => {
+                          renderedGroups.add(groupName);
+                          const group = groupMap[groupName];
+                          return (
+                            <div key={groupName} className="pl-2">
+                              <span className="font-semibold text-gray-600 dark:text-gray-300">{group.name}:</span>{' '}
+                              {group.options.map((opt, i, arr) => (
+                                <span key={i}>
+                                  {opt.name}{opt.quantity > 1 ? ` x${opt.quantity}` : ''}{i < arr.length - 1 ? ', ' : ''}
+                                </span>
+                              ))}
+                            </div>
+                          );
+                        }),
+                        // Render any remaining groups not in groupOrder
+                        ...Object.entries(groupMap)
+                          .filter(([groupName]) => !renderedGroups.has(groupName))
+                          .map(([groupName, group]) => (
+                            <div key={groupName} className="pl-2">
+                              <span className="font-semibold text-gray-600 dark:text-gray-300">{group.name}:</span>{' '}
+                              {group.options.map((opt, i, arr) => (
+                                <span key={i}>
+                                  {opt.name}{opt.quantity > 1 ? ` x${opt.quantity}` : ''}{i < arr.length - 1 ? ', ' : ''}
+                                </span>
+                              ))}
+                            </div>
+                          ))
+                      ];
+                    })()}
+                    {/* Fallback if no groupOrder: show all groups sorted by displayOrder then name */}
+                    {(!item.groupOrder || item.groupOrder.length === 0) && Object.values(groupOptionsByGroupNameWithOrder(item.selectedItems)).sort((a, b) => {
+                      if (a.displayOrder !== b.displayOrder) return a.displayOrder - b.displayOrder;
+                      return a.name.localeCompare(b.name);
+                    }).map(group => (
+                      <div key={group.name} className="pl-2">
+                        <span className="font-semibold text-gray-600 dark:text-gray-300">{group.name}:</span>{' '}
+                        {group.options.map((opt, i, arr) => (
+                          <span key={i}>
+                            {opt.name}{opt.quantity > 1 ? ` x${opt.quantity}` : ''}{i < arr.length - 1 ? ', ' : ''}
+                          </span>
+                        ))}
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -733,12 +846,55 @@ const Checkout = ({ basket: propBasket, setBasket: propSetBasket, orderMethod: p
                           <div className="mt-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                             {item.selectedItems && item.selectedItems.length > 0 && (
                               <div className="mb-2">
-                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Selected Items:</span>
+                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Selected Options:</span>
                                 <div className="mt-1 space-y-1">
-                                  {item.selectedItems.map((selected, index) => (
-                                    <p key={index} className="text-sm text-gray-500 dark:text-gray-400">
-                                      {selected.quantity > 1 ? `${selected.quantity}x ` : ''}{selected.name}
-                                    </p>
+                                  {/* Display groups in the order of item.groupOrder, then any remaining groups */}
+                                  {item.groupOrder && item.groupOrder.length > 0 && (() => {
+                                    const groupMap = groupOptionsByGroupNameWithOrder(item.selectedItems);
+                                    const renderedGroups = new Set();
+                                    return [
+                                      ...item.groupOrder.filter(groupName => groupMap[groupName]).map(groupName => {
+                                        renderedGroups.add(groupName);
+                                        const group = groupMap[groupName];
+                                        return (
+                                          <div key={groupName} className="pl-2">
+                                            <span className="font-semibold text-gray-600 dark:text-gray-300">{group.name}:</span>{' '}
+                                            {group.options.map((opt, i, arr) => (
+                                              <span key={i}>
+                                                {opt.name}{opt.quantity > 1 ? ` x${opt.quantity}` : ''}{i < arr.length - 1 ? ', ' : ''}
+                                              </span>
+                                            ))}
+                                          </div>
+                                        );
+                                      }),
+                                      // Render any remaining groups not in groupOrder
+                                      ...Object.entries(groupMap)
+                                        .filter(([groupName]) => !renderedGroups.has(groupName))
+                                        .map(([groupName, group]) => (
+                                          <div key={groupName} className="pl-2">
+                                            <span className="font-semibold text-gray-600 dark:text-gray-300">{group.name}:</span>{' '}
+                                            {group.options.map((opt, i, arr) => (
+                                              <span key={i}>
+                                                {opt.name}{opt.quantity > 1 ? ` x${opt.quantity}` : ''}{i < arr.length - 1 ? ', ' : ''}
+                                              </span>
+                                            ))}
+                                          </div>
+                                        ))
+                                    ];
+                                  })()}
+                                  {/* Fallback if no groupOrder: show all groups sorted by displayOrder then name */}
+                                  {(!item.groupOrder || item.groupOrder.length === 0) && Object.values(groupOptionsByGroupNameWithOrder(item.selectedItems)).sort((a, b) => {
+                                    if (a.displayOrder !== b.displayOrder) return a.displayOrder - b.displayOrder;
+                                    return a.name.localeCompare(b.name);
+                                  }).map(group => (
+                                    <div key={group.name} className="pl-2">
+                                      <span className="font-semibold text-gray-600 dark:text-gray-300">{group.name}:</span>{' '}
+                                      {group.options.map((opt, i, arr) => (
+                                        <span key={i}>
+                                          {opt.name}{opt.quantity > 1 ? ` x${opt.quantity}` : ''}{i < arr.length - 1 ? ', ' : ''}
+                                        </span>
+                                      ))}
+                                    </div>
                                   ))}
                                 </div>
                               </div>

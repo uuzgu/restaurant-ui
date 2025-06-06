@@ -1,84 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useLanguage } from '../LanguageContext';
-import { useDarkMode } from '../DarkModeContext';
-import { handlePaymentCancel } from '../controllers/paymentController';
+import { useNavigate } from 'react-router-dom';
+import { handlePaymentCancel, getStoredCheckoutData, clearStoredCheckoutData } from '../controllers/paymentController';
 
 const PaymentCancel = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { language, translations } = useLanguage();
-  const { darkMode } = useDarkMode();
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [storedCheckoutData, setStoredCheckoutData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const processPaymentCancel = async () => {
+    const processCancellation = async () => {
       try {
-        setLoading(true);
-        // Get session_id from URL query parameters
-        const params = new URLSearchParams(location.search);
-        let sessionId = params.get('session_id') || params.get('sessionId');
-        const paymentMethod = params.get('payment_method') || 'stripe';
-
-        // Log all available information for debugging
-        console.log('Payment Cancel Page - Full URL:', window.location.href);
-        console.log('Payment Cancel Page - Search Params:', location.search);
-        console.log('Payment Cancel Page - Session ID from params:', sessionId);
-        console.log('Payment Cancel Page - Payment Method:', paymentMethod);
-
-        // Try to get session ID from localStorage if not in URL
-        const storedSessionId = localStorage.getItem('stripeSessionId');
-        console.log('Payment Cancel Page - Stored Session ID:', storedSessionId);
-
-        // Use the first available session ID
-        const sessionIdToUse = sessionId || storedSessionId;
-        console.log('Payment Cancel Page - Using Session ID:', sessionIdToUse);
-
-        if (!sessionIdToUse) {
-          console.error('No session ID found in URL or localStorage');
-          throw new Error('No session ID found');
-        }
-
-        // Handle payment cancellation with backend
-        await handlePaymentCancel(sessionIdToUse);
-
-        // Get the stored checkout data
-        const storedData = localStorage.getItem('checkoutData');
-        if (storedData) {
-          const parsedData = JSON.parse(storedData);
-          console.log('Retrieved checkout data:', parsedData);
-          setStoredCheckoutData(parsedData);
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        
+        if (sessionId) {
+          await handlePaymentCancel(sessionId);
         }
       } catch (err) {
-        console.error('Payment cancellation error:', err);
-        console.error('Error stack:', err.stack);
-        if (err.response) {
-          console.error('Error response data:', err.response.data);
-          console.error('Error status:', err.response.status);
-          console.error('Error headers:', err.response.headers);
-        }
-        setError(err.message || 'Failed to process payment cancellation');
+        console.error('Error processing cancellation:', err);
+        setError('Failed to process payment cancellation');
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
-    processPaymentCancel();
-  }, [location]);
+    processCancellation();
+  }, []);
 
-  const handleRetryPayment = () => {
-    if (storedCheckoutData && storedCheckoutData.items) {
-      // Store the basket in localStorage to ensure it persists
-      localStorage.setItem('basket', JSON.stringify(storedCheckoutData.items));
-      
-      // Redirect back to checkout with the stored data
+  const handleRetry = () => {
+    const checkoutData = getStoredCheckoutData();
+    if (checkoutData) {
+      // Navigate to checkout with stored data
       navigate('/checkout', { 
-        state: {
-          basket: storedCheckoutData.items,
-          orderMethod: storedCheckoutData.orderMethod || "delivery",
-          customerInfo: storedCheckoutData.customerInfo || {}
+        state: { 
+          items: checkoutData.items,
+          customerInfo: checkoutData.customerInfo,
+          orderMethod: checkoutData.orderMethod,
+          paymentMethod: checkoutData.paymentMethod
         }
       });
     } else {
@@ -87,53 +45,45 @@ const PaymentCancel = () => {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className={`min-h-screen flex items-center justify-center px-4 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-4"></div>
-          <p className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            {translations[language].processingCancellation || 'Processing cancellation...'}
-          </p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Processing cancellation...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen flex items-center justify-center px-4 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
-      <div className={`max-w-md w-full p-8 rounded-2xl shadow-lg ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-        {/* Error Icon */}
-        <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-            <span className="text-4xl">❌</span>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+        <div className="text-center">
+          <div className="text-red-500 text-6xl mb-4">
+            <i className="fas fa-times-circle"></i>
           </div>
-        </div>
-
-        {/* Error Message */}
-        <div className="text-center mb-8">
-          <h1 className={`text-3xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-            {translations[language].paymentCanceled || 'Payment Canceled'}
-          </h1>
-          <p className={`text-lg ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            {error || translations[language].paymentError || 'Your payment was canceled. Would you like to try again?'}
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">Payment Cancelled</h2>
+          <p className="text-gray-600 mb-6">
+            Your payment was cancelled. Would you like to try again?
           </p>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="space-y-4">
-          <button
-            onClick={handleRetryPayment}
-            className="w-full py-3 px-6 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold transition-colors duration-200"
-          >
-            {translations[language].retryPayment || 'Retry Payment'}
-          </button>
-          <button
-            onClick={() => navigate('/')}
-            className="w-full py-3 px-6 rounded-xl border-2 border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 font-semibold transition-colors duration-200"
-          >
-            {translations[language].returnToHome || 'Return to Home'}
-          </button>
+          {error && (
+            <p className="text-red-500 mb-4">{error}</p>
+          )}
+          <div className="space-y-4">
+            <button
+              onClick={handleRetry}
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
+            >
+              Retry Payment
+            </button>
+            <button
+              onClick={() => navigate('/')}
+              className="w-full bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300 transition duration-200"
+            >
+              Return to Home
+            </button>
+          </div>
         </div>
       </div>
     </div>
