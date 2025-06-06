@@ -3,11 +3,22 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import { useDarkMode } from "../DarkModeContext";
 import './CategoryCount.css';
 
+// Import images directly
+import pizzaImage from '../assets/images/categories/pizzaCategoryListpng.png';
+import bowlImage from '../assets/images/categories/bowlCategory.png';
+import burgerImage from '../assets/images/categories/cheeseburgerCategoryList.png';
+import saladImage from '../assets/images/categories/saladCategoryList.png';
+import breakfastImage from '../assets/images/categories/breakfastCategoryList.png';
+import drinksImage from '../assets/images/categories/drinksCategoryList.png';
+import soupImage from '../assets/images/categories/soupCategoryList.png';
+import dessertImage from '../assets/images/categories/dessertCategoryList.png';
+
 const CategoryCount = ({ categories, activeCategory, setActiveCategory, scrollToSection }) => {
   const categoryListRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const { darkMode } = useDarkMode();
+  const [imageErrors, setImageErrors] = useState({});
 
   // Suppress observer right after click
   const [suppressObserver, setSuppressObserver] = useState(false);
@@ -19,15 +30,15 @@ const CategoryCount = ({ categories, activeCategory, setActiveCategory, scrollTo
 
   // Default category image mapping for fallback
   const defaultCategoryImages = {
-    "0": "/images/categories/pizzaCategoryListpng.png", // Using pizza image for promotions
-    "1": "/images/categories/pizzaCategoryListpng.png",
-    "2": "/images/categories/bowlCategory.png",
-    "3": "/images/categories/cheeseburgerCategoryList.png",
-    "4": "/images/categories/saladCategoryList.png",
-    "5": "/images/categories/breakfastCategoryList.png",
-    "6": "/images/categories/drinksCategoryList.png",
-    "7": "/images/categories/soupCategoryList.png",
-    "8": "/images/categories/dessertCategoryList.png"
+    "0": pizzaImage, // Using pizza image for promotions
+    "1": pizzaImage,
+    "2": bowlImage,
+    "3": burgerImage,
+    "4": saladImage,
+    "5": breakfastImage,
+    "6": drinksImage,
+    "7": soupImage,
+    "8": dessertImage
   };
 
   // Sort categories to match backend ordering
@@ -83,6 +94,13 @@ const CategoryCount = ({ categories, activeCategory, setActiveCategory, scrollTo
     setTimeout(() => setSuppressObserver(false), 600); // adjust as needed
   };
 
+  const handleImageError = (categoryId) => {
+    setImageErrors(prev => ({
+      ...prev,
+      [categoryId]: true
+    }));
+  };
+
   if (!categories || categories.length === 0) {
     return null;
   }
@@ -122,15 +140,14 @@ const CategoryCount = ({ categories, activeCategory, setActiveCategory, scrollTo
             <span className="mb-1 text-sm sm:text-base w-full block whitespace-normal font-semibold text-center" title={`${category.category} (${category.itemCount})`}>
               {category.category} ({category.itemCount})
             </span>
-            <img 
-              src={defaultCategoryImages[category.categoryId.toString()]} 
-              alt={category.category}
-              className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 object-contain"
-              onError={(e) => {
-                console.error(`Failed to load image for category ${category.categoryId}:`, e);
-                e.target.style.display = 'none';
-              }}
-            />
+            {!imageErrors[category.categoryId] && (
+              <img 
+                src={defaultCategoryImages[category.categoryId.toString()]} 
+                alt={category.category}
+                className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 object-contain"
+                onError={() => handleImageError(category.categoryId)}
+              />
+            )}
             {activeCategory === category.categoryId && (
               <span className="category-underline"></span>
             )}
