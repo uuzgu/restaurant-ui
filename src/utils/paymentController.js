@@ -17,7 +17,8 @@ const API_ENDPOINTS = {
   },
   ORDER: {
     CREATE_CASH: '/api/Order/create-cash-order',
-    CREATE_STRIPE: '/api/Order/create-stripe-order'
+    CREATE_STRIPE: '/api/Order/create-stripe-order',
+    GET_ORDER: '/api/Order'
   },
   POSTCODE: {
     GET_MINIMUM_ORDER: '/api/PostcodeMinimumOrder/GetMinimumOrderValue'
@@ -28,7 +29,7 @@ const API_ENDPOINTS = {
 const createCashOrder = async (orderData) => {
   try {
     console.log('Creating cash order with data:', orderData);
-    const response = await axios.post(`${API_BASE_URL}/api/orders/cash`, orderData, {
+    const response = await axios.post(`${getBaseUrl()}${API_ENDPOINTS.ORDER.CREATE_CASH}`, orderData, {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
