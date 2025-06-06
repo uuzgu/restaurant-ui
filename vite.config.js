@@ -10,19 +10,19 @@ export default defineConfig({
     },
   },
   build: {
-    assetsDir: 'assets',
+    assetsDir: 'static/media',
     rollupOptions: {
       output: {
         assetFileNames: (assetInfo) => {
           const info = assetInfo.name.split('.');
           const ext = info[info.length - 1];
           if (/\.(png|jpe?g|gif|svg|webp)$/.test(assetInfo.name)) {
-            return `assets/images/[name][extname]`;
+            return `static/media/[name][extname]`;
           }
-          return `assets/[name][extname]`;
+          return `static/media/[name][extname]`;
         },
       },
     },
   },
-  base: './', // This ensures assets are loaded relative to the current path
+  base: '/',
 }); 
