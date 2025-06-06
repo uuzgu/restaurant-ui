@@ -6,8 +6,8 @@ const getBaseUrl = () => {
   if (process.env.NODE_ENV === 'development') {
     return 'http://localhost:5019';
   }
-  // In production, use the current origin
-  return window.location.origin;
+  // In production, use the API URL
+  return 'https://restaurant-api-923e.onrender.com';
 };
 
 // Centralized API endpoint configuration
