@@ -9,7 +9,6 @@ import Basket from "../components/Basket";
 import { useDarkMode } from "../DarkModeContext";
 import "../colors/popupIngredientsColors.css";
 import { useApi } from '../contexts/ApiContext';
-import OptimizedImage from './OptimizedImage';
 
 const ItemList = ({ basketVisible, setBasketVisible }) => {
   const { language, translations } = useLanguage();
@@ -1103,13 +1102,10 @@ const ItemList = ({ basketVisible, setBasketVisible }) => {
               </button>
               {selectedItem.image_url && (
                 <div className="relative w-full h-[180px] sm:h-[220px] md:h-[300px] flex-shrink-0 rounded-[30px] overflow-hidden">
-                  <OptimizedImage
+                  <img
                     src={selectedItem.image_url}
                     alt={selectedItem.name || 'Item'}
                     className="w-full h-full object-cover"
-                    loading="lazy"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    quality={85}
                   />
                   {showRequiredOptionsWarning && (
                     <div className="absolute bottom-0 left-0 right-0 bg-red-500/90 text-white py-2 px-4 text-center animate-fade-in">

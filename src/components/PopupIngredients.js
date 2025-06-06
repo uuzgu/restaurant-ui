@@ -1,5 +1,4 @@
 import React from 'react';
-import OptimizedImage from './OptimizedImage';
 import '../colors/popupIngredientsColors.css';
 
 const PopupIngredients = ({ item, onClose, onAddToBasket }) => {
@@ -9,13 +8,10 @@ const PopupIngredients = ({ item, onClose, onAddToBasket }) => {
         <div className="rounded-[30px] bg-[var(--popup-container-bg)] text-[var(--popup-header-text)] w-full overflow-hidden flex flex-col">
           {item.image_url && (
             <div className="relative w-full h-[300px] flex-shrink-0">
-              <OptimizedImage
+              <img
                 src={item.image_url}
                 alt={item.name || 'Item'}
                 className="w-full h-full object-cover"
-                loading="lazy"
-                sizes="(max-width: 768px) 100vw, 500px"
-                quality={85}
               />
               <button
                 onClick={onClose}

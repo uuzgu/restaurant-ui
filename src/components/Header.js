@@ -5,7 +5,6 @@ import pizzaLogoDark from "../assets/pizzalogodark.png";
 import { Instagram, Twitter, Moon, Sun, ShoppingCart } from 'lucide-react';
 import { useState, useEffect } from "react";
 import { useDarkMode } from '../DarkModeContext';
-import OptimizedImage from './OptimizedImage';
 import '../colors/headerColors.css';
 
 const Header = ({ toggleBasket, basketVisible }) => {
@@ -20,19 +19,15 @@ const Header = ({ toggleBasket, basketVisible }) => {
         {/* 🔴 LEFT: Logo + Navigation */}
         <div className="flex items-center space-x-2 sm:space-x-6 md:space-x-8 min-w-0">
           <div className="relative h-16 sm:h-24 flex items-center mr-2 sm:mr-6 min-w-0">
-            <OptimizedImage
+            <img
               src={pizzaLogo}
               alt="Pizza Logo"
               className="h-12 sm:h-20 w-auto object-contain block dark:hidden"
-              loading="eager"
-              quality={90}
             />
-            <OptimizedImage
+            <img
               src={pizzaLogoDark}
               alt="Pizza Logo Dark"
               className="h-12 sm:h-20 w-auto object-contain hidden dark:block"
-              loading="eager"
-              quality={90}
             />
           </div>
 
