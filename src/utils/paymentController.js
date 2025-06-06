@@ -1,3 +1,29 @@
+// Helper function to construct full API URLs
+const getBaseUrl = () => {
+  // In development, use localhost
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:5019';
+  }
+  // In production, use the API URL
+  return 'https://restaurant-api-923e.onrender.com';
+};
+
+// Centralized API endpoint configuration
+const API_ENDPOINTS = {
+  STRIPE: {
+    CREATE_CHECKOUT: '/api/Stripe/create-checkout-session',
+    PAYMENT_SUCCESS: '/api/Stripe/payment-success',
+    PAYMENT_CANCEL: '/api/Stripe/payment-cancel'
+  },
+  ORDER: {
+    CREATE_CASH: '/api/Order/create-cash-order',
+    CREATE_STRIPE: '/api/Order/create-stripe-order'
+  },
+  POSTCODE: {
+    GET_MINIMUM_ORDER: '/api/PostcodeMinimumOrder/GetMinimumOrderValue'
+  }
+};
+
 // Create a cash order
 const createCashOrder = async (orderData) => {
   try {
