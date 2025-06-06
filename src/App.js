@@ -8,7 +8,6 @@ import './colors/orderColors.css'; // Import order colors
 import ItemList from './components/ItemList'; // Order page
 import Checkout from './components/Checkout';
 import Home from './components/Home'; // Import Home component
-import GridPlayground from './components/GridPlayground'; // Import GridPlayground component
 import PaymentSuccess from './components/PaymentSuccess';
 import PaymentCancel from './components/PaymentCancel';
 import { ApiProvider } from './contexts/ApiContext';
@@ -33,7 +32,6 @@ function App() {
             <Route path="/" element={<Home />} />  {/* Home route */}
             <Route path="/order" element={<ItemList basketVisible={basketVisible} setBasketVisible={setBasketVisible} />} />  {/* Order route */}
             <Route path="/checkout" element={<Checkout />} />
-            <Route path="/grid-playground" element={<GridPlayground />} />  {/* New grid playground route */}
             <Route path="/payment/success" element={<PaymentSuccess />} />
             <Route path="/payment/cancel" element={<PaymentCancel />} />
             <Route path="/coupons" element={<CouponManager />} />
