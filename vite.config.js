@@ -17,11 +17,12 @@ export default defineConfig({
           const info = assetInfo.name.split('.');
           const ext = info[info.length - 1];
           if (/\.(png|jpe?g|gif|svg|webp)$/.test(assetInfo.name)) {
-            return `assets/images/[name]-[hash][extname]`;
+            return `assets/images/[name][extname]`;
           }
-          return `assets/[name]-[hash][extname]`;
+          return `assets/[name][extname]`;
         },
       },
     },
   },
+  base: './', // This ensures assets are loaded relative to the current path
 }); 

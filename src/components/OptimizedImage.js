@@ -15,8 +15,8 @@ const OptimizedImage = ({
   // Check if the image is a local asset (imported) or a remote URL
   const isLocalAsset = typeof src === 'string' && !src.startsWith('http') && !src.startsWith('data:');
   
-  // For local assets, use the src directly as Vite will handle the path
-  const imageSrc = isLocalAsset ? src : src;
+  // For local assets, ensure the path is correct
+  const imageSrc = isLocalAsset ? src.replace(/^\.\.\/assets\//, './assets/') : src;
   
   // Only generate WebP and srcset for local assets
   const getWebPSrc = (imageSrc) => {
